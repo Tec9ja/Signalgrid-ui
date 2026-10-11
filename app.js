@@ -12,3 +12,15 @@ const locs=[['library','Main Library','4 floors · 12 zones','89% coverage'],['f
 $('#locationCards').innerHTML=locs.map(x=>`<article class="location-card"><div><span class="loc-icon"><i data-lucide="${x[0]}"></i></span><button class="icon-btn"><i data-lucide="more-horizontal"></i></button></div><h3>${x[1]}</h3><p>${x[2]}</p><footer><span>${x[3]}</span><b>View details →</b></footer></article>`).join('');lucide.createIcons();
 const modal=$('#testModal'); $$('[data-open="test"]').forEach(b=>b.onclick=()=>modal.classList.add('open')); $('.modal-close').onclick=()=>modal.classList.remove('open'); modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')}; $('.run-test').onclick=()=>{ $('.test-fields').classList.add('hidden'); $('.test-progress').classList.remove('hidden'); $('.run-test').classList.add('hidden'); setTimeout(()=>{modal.classList.remove('open');$('.test-fields').classList.remove('hidden');$('.test-progress').classList.add('hidden');$('.run-test').classList.remove('hidden');$('#toast').classList.add('show');setTimeout(()=>$('#toast').classList.remove('show'),3000)},1800)};
 $$('.range button,.map-tabs button').forEach(b=>b.onclick=()=>{[...b.parentNode.children].forEach(x=>x.classList.remove('active'));b.classList.add('active')});
+// Complete product UI interactions
+const pageNames={surveys:'RF survey studio',sources:'Data sources',load:'AP load analysis',insights:'Explainable insights'};
+const oldNavTo=navTo;
+// page crumb extension is handled after navigation
+$$('[data-page="surveys"],[data-page="sources"],[data-page="load"],[data-page="insights"]').forEach(b=>b.addEventListener('click',()=>{$('#pageCrumb').textContent=pageNames[b.dataset.page]}));
+const bannerClose=$('#bannerClose'); if(bannerClose) bannerClose.onclick=()=>bannerClose.closest('.prototype-banner').remove();
+const uploadFloor=$('#uploadFloor'), floorInput=$('#floorInput'); if(uploadFloor&&floorInput){uploadFloor.onclick=()=>floorInput.click();floorInput.onchange=()=>{if(floorInput.files.length){uploadFloor.querySelector('b').textContent=floorInput.files[0].name;uploadFloor.querySelector('span').textContent='Ready for calibration';}}}
+const samplePlan=$('#samplePlan'); if(samplePlan) samplePlan.onclick=()=>{$('#surveyCanvas').innerHTML='<div class="sample-floor"><i class="survey-point"></i><i class="survey-point imported"></i><i class="survey-point"></i><i class="survey-point imported"></i></div>';};
+$$('.canvas-tools [data-tool]').forEach(b=>b.onclick=()=>{$$('.canvas-tools [data-tool]').forEach(x=>x.classList.remove('active'));b.classList.add('active')});
+$$('.rating-input button').forEach(b=>b.onclick=e=>{e.preventDefault();$$('.rating-input button').forEach(x=>x.classList.toggle('active',+x.textContent<=+b.textContent));});
+const importModal=$('#importModal'); if($('#importData')&&importModal){$('#importData').onclick=()=>importModal.classList.add('open');$('.import-close').onclick=()=>importModal.classList.remove('open');importModal.onclick=e=>{if(e.target===importModal)importModal.classList.remove('open')}}
+lucide.createIcons();
