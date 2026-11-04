@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\HeatmapController;
 use App\Http\Controllers\MeasurementTemplateController;
 use App\Http\Controllers\MeasurementImportController;
 use App\Http\Controllers\MeasurementController;
@@ -57,4 +58,10 @@ Route::middleware('auth')->group(function(){
  Route::post('/api/surveys/{survey}/measurement-imports',[MeasurementImportController::class,'store'])->name('measurement-imports.store');
  Route::get('/api/measurement-imports/{measurementImport}/errors',[MeasurementImportController::class,'errors'])->name('measurement-imports.errors');
  Route::get('/measurement-import-template.csv',MeasurementTemplateController::class)->name('measurement-imports.template');
+});
+
+Route::middleware('auth')->group(function(){
+ Route::get('/surveys/{survey}/heatmaps',[HeatmapController::class,'index'])->name('heatmaps.index');
+ Route::post('/api/surveys/{survey}/heatmaps',[HeatmapController::class,'store'])->name('heatmaps.store');
+ Route::get('/api/heatmaps/{heatmapRun}',[HeatmapController::class,'show'])->name('heatmaps.show');
 });

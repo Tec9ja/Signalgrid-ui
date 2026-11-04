@@ -4,3 +4,4 @@ import '../css/signalgrid.css';
 import './signalgrid';
 import './floor-plan-workspace';
 import './survey-workspace';
+import './heatmap';
