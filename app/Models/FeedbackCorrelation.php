@@ -1,0 +1,3 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Model;
+class FeedbackCorrelation extends Model{protected $fillable=['feedback_response_id','measurement_id','ap_load_sample_id','strength','time_difference_minutes','location_match','evidence','calculation_version'];protected function casts():array{return ['evidence'=>'array','time_difference_minutes'=>'decimal:3'];}public function feedback(){return $this->belongsTo(FeedbackResponse::class,'feedback_response_id');}public function measurement(){return $this->belongsTo(Measurement::class);}public function apLoadSample(){return $this->belongsTo(ApLoadSample::class);}}

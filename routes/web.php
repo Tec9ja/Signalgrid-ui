@@ -1,4 +1,6 @@
 <?php
+use App\Http\Controllers\FeedbackAdminController;
+use App\Http\Controllers\PublicFeedbackController;
 use App\Http\Controllers\AccessPointController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\HeatmapController;
@@ -77,4 +79,14 @@ Route::middleware('auth')->group(function(){
  Route::post('/api/access-points',[AccessPointController::class,'store'])->name('access-points.store');
  Route::post('/api/access-points/{accessPoint}/samples',[AccessPointController::class,'sample'])->name('access-points.samples.store');
  Route::get('/api/access-points/{accessPoint}/analysis',[AccessPointController::class,'analysis'])->name('access-points.analysis');
+});
+
+Route::middleware('throttle:20,1')->group(function(){
+ Route::get('/feedback',[PublicFeedbackController::class,'create'])->name('feedback.public');
+ Route::post('/feedback',[PublicFeedbackController::class,'store'])->name('feedback.public.store');
+ Route::get('/feedback/thank-you/{publicId}',[PublicFeedbackController::class,'thanks'])->name('feedback.thank-you');
+});
+Route::middleware('auth')->group(function(){
+ Route::get('/admin/feedback',[FeedbackAdminController::class,'index'])->name('feedback.index');
+ Route::post('/api/feedback/{feedbackResponse}/correlate',[FeedbackAdminController::class,'correlate'])->name('feedback.correlate');
 });
