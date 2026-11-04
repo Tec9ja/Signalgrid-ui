@@ -1,0 +1,15 @@
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+return new class extends Migration {
+ public function up():void{
+  Schema::create('institutions',function(Blueprint $t){$t->id();$t->string('name');$t->string('slug')->unique();$t->string('type',50)->default('university');$t->string('timezone',64)->default('Africa/Lagos');$t->string('status',20)->default('active')->index();$t->timestamps();$t->softDeletes();});
+  Schema::create('campuses',function(Blueprint $t){$t->id();$t->foreignId('institution_id')->constrained()->cascadeOnDelete();$t->string('name');$t->string('code',30);$t->text('address')->nullable();$t->decimal('latitude',10,7)->nullable();$t->decimal('longitude',10,7)->nullable();$t->string('status',20)->default('active');$t->timestamps();$t->softDeletes();$t->unique(['institution_id','code']);});
+  Schema::create('buildings',function(Blueprint $t){$t->id();$t->foreignId('campus_id')->constrained()->cascadeOnDelete();$t->string('name');$t->string('code',30);$t->text('description')->nullable();$t->unsignedSmallInteger('display_order')->default(0);$t->string('status',20)->default('active');$t->timestamps();$t->softDeletes();$t->unique(['campus_id','code']);});
+  Schema::create('floors',function(Blueprint $t){$t->id();$t->foreignId('building_id')->constrained()->cascadeOnDelete();$t->string('name');$t->smallInteger('level_number')->default(0);$t->string('code',30);$t->decimal('area_sqm',12,2)->nullable();$t->unsignedSmallInteger('display_order')->default(0);$t->string('status',20)->default('active');$t->timestamps();$t->softDeletes();$t->unique(['building_id','code']);});
+  Schema::create('survey_areas',function(Blueprint $t){$t->id();$t->foreignId('floor_id')->constrained()->cascadeOnDelete();$t->string('name');$t->string('code',30);$t->string('area_type',40)->default('general');$t->jsonb('boundary_points')->nullable();$t->decimal('area_sqm',12,2)->nullable();$t->string('status',20)->default('active');$t->timestamps();$t->softDeletes();$t->unique(['floor_id','code']);});
+  Schema::create('floor_plans',function(Blueprint $t){$t->id();$t->foreignId('floor_id')->constrained()->cascadeOnDelete();$t->foreignId('uploaded_by')->nullable()->constrained('users')->nullOnDelete();$t->string('original_name');$t->string('file_path');$t->string('mime_type',100);$t->unsignedBigInteger('file_size');$t->unsignedInteger('original_width')->nullable();$t->unsignedInteger('original_height')->nullable();$t->decimal('pixels_per_metre',12,4)->nullable();$t->decimal('rotation_degrees',8,3)->default(0);$t->unsignedInteger('version')->default(1);$t->boolean('is_active')->default(true)->index();$t->jsonb('usable_boundary')->nullable();$t->timestamps();});
+ }
+ public function down():void{Schema::dropIfExists('floor_plans');Schema::dropIfExists('survey_areas');Schema::dropIfExists('floors');Schema::dropIfExists('buildings');Schema::dropIfExists('campuses');Schema::dropIfExists('institutions');}
+};
