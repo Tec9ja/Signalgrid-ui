@@ -1,0 +1,3 @@
+<?php
+namespace Database\Seeders;use App\Models\SystemThreshold;use Illuminate\Database\Seeder;
+class SystemThresholdSeeder extends Seeder{public function run():void{$rows=[['rssi_weak_dbm',-75,'dBm','Coverage threshold'],['throughput_good_mbps',25,'Mbps','Healthy download throughput'],['latency_good_ms',50,'ms','Healthy latency'],['packet_loss_good_percent',1,'percent','Healthy packet loss'],['channel_utilisation_high_percent',70,'percent','High channel utilisation']];foreach($rows as[$key,$value,$unit,$description])SystemThreshold::updateOrCreate(['key'=>$key],compact('value','unit','description'));}}

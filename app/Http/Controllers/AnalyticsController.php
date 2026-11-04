@@ -1,0 +1,3 @@
+<?php
+namespace App\Http\Controllers;use App\Services\DashboardMetricsService;use Carbon\Carbon;use Illuminate\Http\JsonResponse;use Illuminate\Http\Request;
+class AnalyticsController extends Controller{public function dashboard(Request $r,DashboardMetricsService $service):JsonResponse{abort_unless($r->user()->can('dashboard.view'),403);$d=$r->validate(['floor_id'=>'nullable|exists:floors,id','from'=>'nullable|date','to'=>'nullable|date|after_or_equal:from','source'=>'nullable|in:all,measured,imported,simulated']);$to=isset($d['to'])?Carbon::parse($d['to']):now();$from=isset($d['from'])?Carbon::parse($d['from']):$to->copy()->subDays(7);return response()->json($service->calculate($d['floor_id']??null,$from,$to,$d['source']??'all'));}}

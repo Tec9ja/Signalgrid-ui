@@ -5,3 +5,4 @@ import './signalgrid';
 import './floor-plan-workspace';
 import './survey-workspace';
 import './heatmap';
+import './dashboard-analytics';

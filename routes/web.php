@@ -1,4 +1,6 @@
 <?php
+use App\Http\Controllers\AccessPointController;
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\HeatmapController;
 use App\Http\Controllers\MeasurementTemplateController;
 use App\Http\Controllers\MeasurementImportController;
@@ -64,4 +66,15 @@ Route::middleware('auth')->group(function(){
  Route::get('/surveys/{survey}/heatmaps',[HeatmapController::class,'index'])->name('heatmaps.index');
  Route::post('/api/surveys/{survey}/heatmaps',[HeatmapController::class,'store'])->name('heatmaps.store');
  Route::get('/api/heatmaps/{heatmapRun}',[HeatmapController::class,'show'])->name('heatmaps.show');
+});
+
+Route::get('/api/analytics/dashboard', [AnalyticsController::class, 'dashboard'])
+    ->middleware('auth')
+    ->name('analytics.dashboard');
+
+Route::middleware('auth')->group(function(){
+ Route::get('/access-points',[AccessPointController::class,'index'])->name('access-points.index');
+ Route::post('/api/access-points',[AccessPointController::class,'store'])->name('access-points.store');
+ Route::post('/api/access-points/{accessPoint}/samples',[AccessPointController::class,'sample'])->name('access-points.samples.store');
+ Route::get('/api/access-points/{accessPoint}/analysis',[AccessPointController::class,'analysis'])->name('access-points.analysis');
 });

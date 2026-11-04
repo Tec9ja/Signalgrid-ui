@@ -1,0 +1,3 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Model;
+class ApLoadSample extends Model{protected $fillable=['access_point_id','access_point_radio_id','connected_clients','channel_utilisation_percent','throughput_mbps','latency_ms','packet_loss_percent','rx_bytes','tx_bytes','noise_floor_dbm','cpu_percent','memory_percent','source_type','raw_payload','sampled_at'];protected function casts():array{return ['raw_payload'=>'array','sampled_at'=>'datetime','channel_utilisation_percent'=>'decimal:3','throughput_mbps'=>'decimal:3','latency_ms'=>'decimal:3','packet_loss_percent'=>'decimal:3'];}public function accessPoint(){return $this->belongsTo(AccessPoint::class);}public function radio(){return $this->belongsTo(AccessPointRadio::class,'access_point_radio_id');}}
