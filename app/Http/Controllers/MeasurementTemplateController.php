@@ -1,0 +1,2 @@
+<?php
+namespace App\Http\Controllers;use Illuminate\Http\Response;class MeasurementTemplateController extends Controller{public function __invoke():Response{$csv="x_normalized,y_normalized,ssid,bssid,rssi_dbm,download_mbps,upload_mbps,latency_ms,jitter_ms,packet_loss_percent,channel,frequency_band,captured_at\n0.425,0.680,CampusNet-5G,AA:BB:CC:DD:EE:FF,-58,48.4,15.2,31,6,0.5,44,5GHz,2026-11-04T09:30:00+01:00\n";return response($csv,200,['Content-Type'=>'text/csv','Content-Disposition'=>'attachment; filename="signalgrid-measurement-template.csv"']);}}

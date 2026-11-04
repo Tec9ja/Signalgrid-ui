@@ -2,3 +2,5 @@ import './bootstrap';
 import '../css/app.css';
 import '../css/signalgrid.css';
 import './signalgrid';
+import './floor-plan-workspace';
+import './survey-workspace';

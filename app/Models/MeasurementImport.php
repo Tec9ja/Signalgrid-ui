@@ -1,0 +1,3 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Factories\HasFactory;use Illuminate\Database\Eloquent\Model;
+class MeasurementImport extends Model{use HasFactory;protected $fillable=['survey_id','uploaded_by','original_name','file_path','status','total_rows','accepted_rows','rejected_rows','column_mapping','error_message','processed_at'];protected function casts():array{return ['column_mapping'=>'array','processed_at'=>'datetime'];}public function survey(){return $this->belongsTo(Survey::class);}public function uploader(){return $this->belongsTo(User::class,'uploaded_by');}public function errors(){return $this->hasMany(MeasurementImportError::class);}}

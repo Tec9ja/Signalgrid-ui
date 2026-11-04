@@ -1,0 +1,3 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Factories\HasFactory;use Illuminate\Database\Eloquent\Model;
+class SurveyRun extends Model{use HasFactory;protected $fillable=['survey_id','started_by','status','device_name','device_platform','collector_version','environment','started_at','ended_at'];protected function casts():array{return ['environment'=>'array','started_at'=>'datetime','ended_at'=>'datetime'];}public function survey(){return $this->belongsTo(Survey::class);}public function starter(){return $this->belongsTo(User::class,'started_by');}public function points(){return $this->hasMany(MeasurementPoint::class);}}
