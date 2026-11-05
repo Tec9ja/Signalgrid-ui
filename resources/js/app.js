@@ -6,3 +6,8 @@ import './floor-plan-workspace';
 import './survey-workspace';
 import './heatmap';
 import './dashboard-analytics';
+import './comparisons';
+import './reports';
+import './admin';
+import './validation';
+import './global-navigation';

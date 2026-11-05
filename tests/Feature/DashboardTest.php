@@ -16,12 +16,12 @@ class DashboardTest extends TestCase
         $this->get('/')->assertRedirect('/dashboard');
     }
 
-    public function test_dashboard_loads_the_phase_one_interface(): void
+    public function test_dashboard_loads_the_aligned_aaua_interface(): void
     {
         $this->actingAs(User::factory()->create())->get('/dashboard')
             ->assertOk()
             ->assertSee('SignalGrid')
-            ->assertSee('Demonstration workspace')
+            ->assertSee('Adekunle Ajasin University, Akungba')
             ->assertSee('data-phase="1"', false);
     }
 

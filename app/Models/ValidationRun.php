@@ -1,0 +1,3 @@
+<?php
+namespace App\Models;use Illuminate\Database\Eloquent\Model;
+class ValidationRun extends Model{protected $fillable=['survey_id','executed_by','method','algorithm_version','status','total_points','training_points','holdout_points','holdout_percent','mean_absolute_error','root_mean_square_error','mean_bias_error','maximum_absolute_error','parameters','predictions','limitations','executed_at'];protected function casts():array{return ['parameters'=>'array','predictions'=>'array','limitations'=>'array','executed_at'=>'datetime'];}public function survey(){return $this->belongsTo(Survey::class);}public function executor(){return $this->belongsTo(User::class,'executed_by');}}

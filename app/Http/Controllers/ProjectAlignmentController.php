@@ -1,0 +1,3 @@
+<?php
+namespace App\Http\Controllers;use App\Services\ProjectAlignmentAuditService;use Illuminate\Http\JsonResponse;use Illuminate\Http\Request;use Illuminate\View\View;
+class ProjectAlignmentController extends Controller{public function index(Request $r,ProjectAlignmentAuditService $service):View{abort_unless($r->user()->can('dashboard.view'),403);$audit=$service->audit();return view('project.alignment',compact('audit'));}public function show(Request $r,ProjectAlignmentAuditService $service):JsonResponse{abort_unless($r->user()->can('dashboard.view'),403);return response()->json($service->audit());}}

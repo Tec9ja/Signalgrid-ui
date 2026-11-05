@@ -1,0 +1,3 @@
+<?php
+namespace Tests\Feature;use App\Models\User;use Database\Seeders\{InsightRuleSeeder,ProjectAlignmentSeeder,RolesAndPermissionsSeeder};use Illuminate\Foundation\Testing\RefreshDatabase;use Tests\TestCase;
+class ProjectAlignmentTest extends TestCase{use RefreshDatabase;protected function setUp():void{parent::setUp();$this->seed([RolesAndPermissionsSeeder::class,InsightRuleSeeder::class,ProjectAlignmentSeeder::class]);}public function test_project_profile_uses_aaua_and_integrated_objectives():void{$u=User::factory()->create();$u->assignRole('Viewer');$this->actingAs($u)->getJson('/api/project-alignment')->assertOk()->assertJsonPath('profile.institution.name','Adekunle Ajasin University, Akungba')->assertJsonPath('profile.specification_version','1.1');}}

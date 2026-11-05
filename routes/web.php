@@ -1,4 +1,9 @@
 <?php
+use App\Http\Controllers\ValidationController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ComparisonController;
+use App\Http\Controllers\ProjectAlignmentController;
 use App\Http\Controllers\InsightController;
 use App\Http\Controllers\FeedbackAdminController;
 use App\Http\Controllers\PublicFeedbackController;
@@ -97,4 +102,37 @@ Route::middleware('auth')->group(function(){
  Route::post('/api/surveys/{survey}/insights/generate',[InsightController::class,'generate'])->name('insights.generate');
  Route::patch('/api/insights/{insight}/review',[InsightController::class,'review'])->name('insights.review');
  Route::post('/api/insights/{insight}/actions',[InsightController::class,'action'])->name('insights.actions.store');
+});
+
+Route::middleware('auth')->group(function(){
+ Route::get('/project-alignment',[ProjectAlignmentController::class,'index'])->name('project.alignment');
+ Route::get('/api/project-alignment',[ProjectAlignmentController::class,'show'])->name('project.alignment.api');
+ Route::get('/comparisons',[ComparisonController::class,'index'])->name('comparisons.index');
+ Route::post('/api/comparisons',[ComparisonController::class,'store'])->name('comparisons.store');
+ Route::get('/api/comparisons/{comparisonRun}',[ComparisonController::class,'show'])->name('comparisons.show');
+});
+
+Route::middleware('auth')->group(function(){
+ Route::get('/reports',[ReportController::class,'index'])->name('reports.index');
+ Route::post('/api/reports',[ReportController::class,'store'])->name('reports.store');
+ Route::get('/reports/{report}/preview',[ReportController::class,'preview'])->name('reports.preview');
+ Route::get('/reports/{report}/pdf',[ReportController::class,'pdf'])->name('reports.pdf');
+ Route::get('/reports/{report}/csv',[ReportController::class,'csv'])->name('reports.csv');
+});
+
+Route::middleware(['auth','audit.mutations'])->group(function(){
+ Route::get('/admin',[AdminController::class,'index'])->name('admin.index');
+ Route::patch('/api/admin/users/{user}',[AdminController::class,'updateUser'])->name('admin.users.update');
+ Route::get('/admin/audit-logs',[AdminController::class,'auditLogs'])->name('admin.audit');
+ Route::get('/api/admin/health',[AdminController::class,'health'])->name('admin.health');
+ Route::get('/api/notifications',[AdminController::class,'notifications'])->name('notifications.index');
+ Route::patch('/api/notifications/{notificationId}/read',[AdminController::class,'markNotificationRead'])->name('notifications.read');
+ Route::put('/api/notification-preferences',[AdminController::class,'preference'])->name('notifications.preferences');
+});
+
+Route::middleware('auth')->group(function(){
+ Route::get('/validation',[ValidationController::class,'index'])->name('validation.index');
+ Route::post('/api/surveys/{survey}/validation',[ValidationController::class,'scientific'])->name('validation.scientific');
+ Route::post('/api/validation/acceptance',[ValidationController::class,'acceptance'])->name('validation.acceptance');
+ Route::post('/api/research-observations',[ValidationController::class,'observation'])->name('validation.observations.store');
 });
