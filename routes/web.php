@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\InsightController;
 use App\Http\Controllers\FeedbackAdminController;
 use App\Http\Controllers\PublicFeedbackController;
 use App\Http\Controllers\AccessPointController;
@@ -89,4 +90,11 @@ Route::middleware('throttle:20,1')->group(function(){
 Route::middleware('auth')->group(function(){
  Route::get('/admin/feedback',[FeedbackAdminController::class,'index'])->name('feedback.index');
  Route::post('/api/feedback/{feedbackResponse}/correlate',[FeedbackAdminController::class,'correlate'])->name('feedback.correlate');
+});
+
+Route::middleware('auth')->group(function(){
+ Route::get('/insights',[InsightController::class,'index'])->name('insights.index');
+ Route::post('/api/surveys/{survey}/insights/generate',[InsightController::class,'generate'])->name('insights.generate');
+ Route::patch('/api/insights/{insight}/review',[InsightController::class,'review'])->name('insights.review');
+ Route::post('/api/insights/{insight}/actions',[InsightController::class,'action'])->name('insights.actions.store');
 });
