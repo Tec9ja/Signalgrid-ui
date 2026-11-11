@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias(['audit.mutations' => \App\Http\Middleware\AuditMutatingRequests::class]);
+        $middleware->trustProxies(at: '*');
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {

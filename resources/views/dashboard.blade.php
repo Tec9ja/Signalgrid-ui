@@ -4,43 +4,52 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="theme-color" content="#07111f"><title>{{ $pageTitle ?? 'SignalGrid Network Intelligence' }}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 
-<script src="https://unpkg.com/lucide@latest"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+
 @vite('resources/js/app.js')
 </head>
 <body data-app="signalgrid" data-phase="1">
 <div class="shell">
 <aside class="sidebar" id="sidebar">
-  <a class="brand" href="#"><span class="brand-mark"><i data-lucide="radio-tower"></i></span><span>SignalGrid<small>Campus Intelligence</small></span></a>
+  <a class="brand" href="{{ route('dashboard') }}"><span class="brand-mark"><i data-lucide="radio-tower"></i></span><span>SignalGrid<small>Campus Intelligence</small></span></a>
   <nav>
     <p class="nav-label">Workspace</p>
-    <button type="button" class="nav active" data-page="overview"><i data-lucide="layout-dashboard"></i><span>Overview</span></button>
-    <button type="button" class="nav" data-page="heatmap"><i data-lucide="map"></i><span>Coverage map</span><b>Live</b></button>
-    <button type="button" class="nav" data-page="surveys"><i data-lucide="scan-line"></i><span>RF survey studio</span><b>New</b></button>
-    <button type="button" class="nav" data-page="sources"><i data-lucide="database-zap"></i><span>Data sources</span></button>
-    <button type="button" class="nav" data-page="load"><i data-lucide="router"></i><span>AP load analysis</span></button>
-    <button type="button" class="nav" data-page="insights"><i data-lucide="brain-circuit"></i><span>Explainable insights</span></button>
-    <button type="button" class="nav" data-page="measurements"><i data-lucide="activity"></i><span>Measurements</span></button>
-    <button type="button" class="nav" data-page="feedback"><i data-lucide="messages-square"></i><span>User feedback</span></button>
-    <button type="button" class="nav" data-page="reports"><i data-lucide="file-chart-column"></i><span>Reports</span></button>
+    <a class="nav active" href="{{ route('dashboard') }}"><i data-lucide="layout-dashboard"></i><span>Overview</span></a>
+    <a class="nav" href="{{ route('surveys.index') }}#coverage"><i data-lucide="map"></i><span>Coverage map</span></a>
+    <a class="nav" href="{{ route('surveys.index') }}"><i data-lucide="scan-line"></i><span>RF survey studio</span></a>
+    <a class="nav" href="{{ route('surveys.index') }}#import-measurements"><i data-lucide="database-zap"></i><span>Data sources</span></a>
+    <a class="nav" href="{{ route('access-points.index') }}"><i data-lucide="router"></i><span>AP load analysis</span></a>
+    <a class="nav" href="{{ route('insights.index') }}"><i data-lucide="brain-circuit"></i><span>Explainable insights</span></a>
+    <a class="nav" href="{{ route('measurements.index') }}"><i data-lucide="activity"></i><span>Measurements</span></a>
+    <a class="nav" href="{{ route('feedback.index') }}"><i data-lucide="messages-square"></i><span>User feedback</span></a>
+    <a class="nav" href="{{ route('reports.index') }}"><i data-lucide="file-chart-column"></i><span>Reports</span></a>
+    <a class="nav" href="{{ route('comparisons.index') }}"><i data-lucide="git-compare"></i><span>Comparisons</span></a>
     <p class="nav-label space">Management</p>
-    <button type="button" class="nav" data-page="locations"><i data-lucide="building-2"></i><span>Locations</span></button>
-    <button type="button" class="nav" data-page="settings"><i data-lucide="settings-2"></i><span>Settings</span></button>
+    <a class="nav" href="{{ route('locations.index') }}"><i data-lucide="building-2"></i><span>Locations</span></a>
+    @can('locations.manage')<a class="nav" href="{{ route('campus-setup.show') }}"><i data-lucide="map-pinned"></i><span>Campus setup</span></a>@endcan
+    <a class="nav" href="{{ route('project.alignment') }}"><i data-lucide="compass"></i><span>Project alignment</span></a>
+    <a class="nav" href="{{ route('settings.index') }}"><i data-lucide="settings-2"></i><span>Settings</span></a>
+    @can('audit.view')<a class="nav" href="{{ route('validation.index') }}"><i data-lucide="shield-check"></i><span>Validation</span></a>@endcan
+    @can('users.manage')<a class="nav" href="{{ route('admin.index') }}"><i data-lucide="shield"></i><span>Administration</span></a>@endcan
   </nav>
-  <div class="side-card"><span class="pulse"></span><strong>Monitoring active</strong><p>12 access points reporting</p><div><span>System health</span><b>98.7%</b></div></div>
-  <div class="profile"><div class="avatar">AO</div><div><strong>{{ $displayName ?? 'SignalGrid Administrator' }}</strong><span>{{ $displayRole ?? 'Network Admin' }}</span></div><form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" aria-label="Sign out" title="Sign out"><i data-lucide="log-out"></i></button></form></div>
+  <div class="side-card"><span class="pulse"></span><strong>Measured data</strong><p>Simulated records stay out of scores</p><div><span>Health</span><b id="sideHealthValue">—</b></div></div>
+  @php
+    $nameParts = preg_split('/\s+/', trim($displayName ?? 'SignalGrid')) ?: ['SG'];
+    $avatarInitials = strtoupper(mb_substr($nameParts[0], 0, 1).mb_substr(count($nameParts) > 1 ? $nameParts[array_key_last($nameParts)] : $nameParts[0], count($nameParts) > 1 ? 0 : 1, 1));
+@endphp
+<div class="profile"><div class="avatar">{{ $avatarInitials }}</div><div><strong>{{ $displayName ?? 'SignalGrid Administrator' }}</strong><span>{{ $displayRole ?? 'Network Admin' }}</span></div><form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" aria-label="Sign out" title="Sign out"><i data-lucide="log-out"></i></button></form></div>
 </aside>
 <div class="scrim" id="scrim"></div>
 <main>
-<header><button type="button" class="icon-btn mobile" id="menu"><i data-lucide="menu"></i></button><div class="crumb"><span>Adekunle Ajasin University, Akungba</span><i data-lucide="chevron-right"></i><strong id="pageCrumb">Network overview</strong></div><div class="header-actions"><div class="status"><span></span>All systems operational</div><button type="button" class="icon-btn"><i data-lucide="bell"></i><b class="dot"></b></button><button type="button" class="primary" data-open="test"><i data-lucide="gauge"></i><span>Run network test</span></button></div></header>
+<header><button type="button" class="icon-btn mobile" id="menu" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false"><i data-lucide="menu"></i></button><div class="crumb"><span>{{ $institutionName }}</span><i data-lucide="chevron-right"></i><strong id="pageCrumb">Network overview</strong></div><div class="header-actions"><div class="status"><span></span>Measured records only</div><button type="button" class="icon-btn" id="openNotifications" aria-label="Open notifications" aria-expanded="false" aria-controls="notifyPanel"><i data-lucide="bell"></i><b class="dot" id="notifyDot"></b></button><div class="notify-panel" id="notifyPanel" hidden><strong>Notifications</strong><div id="notifyList"><p>Loading notifications…</p></div></div><a class="primary" href="{{ route('surveys.index') }}" aria-label="Record a measurement"><i data-lucide="scan-line"></i><span>Record a measurement</span></a></div></header>
 <div class="content">
 @if ($isDemonstration ?? true)
 <div class="prototype-banner" role="status" aria-live="polite">
   <i data-lucide="flask-conical" aria-hidden="true"></i>
   <div>
-    <b>Demonstration workspace</b>
+    <b>AAUA research workspace</b>
     <span>
       Values displayed are sample data. Last updated
       {{ ($lastUpdatedAt ?? now())->format('d M Y, H:i') }}.
@@ -53,29 +62,42 @@
 </div>
 @endif
 <section class="page active" id="overview">
-  <div class="hero-row"><div><span class="eyebrow">NETWORK INTELLIGENCE</span><h1>Good morning, {{ $displayName ?? 'SignalGrid Administrator' }}.</h1><p>Here is how your campus network is performing right now.</p></div><div class="source-stamp"><i class="src demo"></i><span><b>AAUA project dataset</b><small>Last refreshed {{ ($lastUpdatedAt ?? now())->format('d M Y, H:i') }}</small></span></div></div>
-<div class="dashboard-filters"><label><i data-lucide="calendar-range"></i><span>Date range<select id="dateFilter"><option>Last 24 hours</option><option>Last 7 days</option><option>Last 30 days</option><option>Custom period</option></select></span></label><label><i data-lucide="map-pin"></i><span>Location<select id="locationFilter"><option>All campus locations</option><option>Main Library</option><option>Science Complex</option><option>Student Centre</option></select></span></label><label><i data-lucide="database"></i><span>Data source<select id="sourceFilter"><option>All sources</option><option>Measured only</option><option>Imported only</option><option>Simulated only</option></select></span></label><button type="button" class="secondary" id="applyFilters"><i data-lucide="check"></i>Apply filters</button></div>
+  <div class="hero-row"><div><span class="eyebrow">NETWORK INTELLIGENCE</span><h1>{{ now()->hour < 12 ? 'Good morning' : (now()->hour < 17 ? 'Good afternoon' : 'Good evening') }}, {{ $displayName ?? 'SignalGrid Administrator' }}.</h1><p>Coverage, speed and latency from measured campus records.</p></div><div class="source-stamp"><i class="src measured"></i><span><b>AAUA project dataset</b><small>Last refreshed {{ ($lastUpdatedAt ?? now())->format('d M Y, H:i') }}</small></span></div></div>
+<div class="dashboard-filters"><label><i data-lucide="calendar-range"></i><span>Date range<select id="dateFilter"><option value="1">Last 24 hours</option><option value="7" selected>Last 7 days</option><option value="30">Last 30 days</option><option value="custom">Custom period</option></select><input id="customFrom" type="date" aria-label="Custom start date"><input id="customTo" type="date" aria-label="Custom end date"></span></label><label><i data-lucide="map-pin"></i><span>Location<select id="locationFilter"><option value="all">All campus locations</option>@foreach(($analyticsFloors ?? []) as $floor)<option value="{{ $floor->id }}">{{ $floor->building->name }} · {{ $floor->name }}</option>@endforeach</select></span></label><label><i data-lucide="database"></i><span>Data source<select id="sourceFilter"><option>All sources</option><option>Measured only</option><option>Imported only</option><option>Simulated only</option></select></span></label><button type="button" class="secondary" id="applyFilters"><i data-lucide="check"></i>Apply filters</button></div>
   <div class="metrics">
-    <article class="metric"><div class="metric-top"><span class="metric-icon cyan"><i data-lucide="wifi"></i></span><span class="trend up"><i data-lucide="arrow-up-right"></i> 4.2%</span></div><small>Coverage score <button type="button" class="tip" data-tip="Percentage of valid surveyed area meeting the configured RSSI threshold.">?</button></small><h2>87<span>%</span></h2><div class="bar"><i style="width:87%"></i></div><p>Across 8 monitored zones</p></article>
-    <article class="metric"><div class="metric-top"><span class="metric-icon blue"><i data-lucide="download"></i></span><span class="trend up"><i data-lucide="arrow-up-right"></i> 8.1%</span></div><small>Avg. download</small><h2>48.6<span> Mbps</span></h2><div class="spark"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p>Peak 92.4 Mbps</p></article>
-    <article class="metric"><div class="metric-top"><span class="metric-icon violet"><i data-lucide="timer"></i></span><span class="trend down"><i data-lucide="arrow-down-right"></i> 3.5%</span></div><small>Avg. latency <button type="button" class="tip" data-tip="Round-trip delay. Lower values generally indicate faster response.">?</button></small><h2>32<span> ms</span></h2><div class="spark violet-spark"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p>Within healthy range</p></article>
-    <article class="metric warning"><div class="metric-top"><span class="metric-icon orange"><i data-lucide="triangle-alert"></i></span><span class="trend warn">Needs attention</span></div><small>Coverage gaps <button type="button" class="tip" data-tip="Surveyed zones below the configured weak-signal threshold.">?</button></small><h2>3<span> zones</span></h2><div class="mini-zones"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div><p>2 new since yesterday</p></article>
+    <article class="metric"><div class="metric-top"><span class="metric-icon cyan"><i data-lucide="wifi"></i></span><span class="trend">Live</span></div><small>Coverage score <button type="button" class="tip" data-tip="Percentage of valid surveyed area meeting the configured RSSI threshold.">?</button></small><h2>—<span>%</span></h2><div class="bar"><i style="width:0%"></i></div><p>Waiting for measurements</p></article>
+    <article class="metric"><div class="metric-top"><span class="metric-icon blue"><i data-lucide="download"></i></span><span class="trend">Live</span></div><small>Median download</small><h2>—<span> Mbps</span></h2><div class="spark"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p>Waiting for measurements</p></article>
+    <article class="metric"><div class="metric-top"><span class="metric-icon violet"><i data-lucide="timer"></i></span><span class="trend">Live</span></div><small>Median latency <button type="button" class="tip" data-tip="Round-trip delay. Lower values generally indicate faster response.">?</button></small><h2>—<span> ms</span></h2><div class="spark violet-spark"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p>Waiting for measurements</p></article>
+    <article class="metric"><div class="metric-top"><span class="metric-icon orange"><i data-lucide="triangle-alert"></i></span><span class="trend">Live</span></div><small>Records in period <button type="button" class="tip" data-tip="Real measurements in the selected period. Simulated records are counted separately and are not used in scores.">?</button></small><h2>—<span></span></h2><div class="mini-zones"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div><p>Waiting for measurements</p></article>
   </div>
   <div class="grid-main">
-    <article class="panel chart-panel"><div class="panel-head performance-head"><div><h3>Network performance</h3><p>Throughput, latency and packet-loss trends</p></div><div class="performance-compare"><select><option>All buildings</option><option>Main Library</option><option>Student Centre</option></select><select><option>All access points</option><option>AP-LIB-04</option><option>AP-STC-03</option></select></div><div class="legend"><span><i class="l1"></i>Download</span><span><i class="l2"></i>Upload</span><span><i class="l3"></i>Latency</span></div><button type="button" class="icon-btn"><i data-lucide="more-horizontal"></i></button></div><div class="chart-wrap"><canvas id="performanceChart"></canvas></div><div class="trend-cards"><div><i class="good"></i><span><b>Throughput healthy</b><small>48.6 Mbps median</small></span></div><div><i class="medium"></i><span><b>Latency elevated</b><small>Lecture Theatre A · 12:00–14:00</small></span></div><div><i class="bad-dot"></i><span><b>Packet loss detected</b><small>Student Centre East · 7.0%</small></span></div></div></article>
-    <article class="panel health"><div class="panel-head"><div><h3>Network health</h3><p>Live quality score</p></div><span class="live"><i></i>LIVE</span></div><div class="gauge"><div><strong>87</strong><span>/100</span></div></div><h4>Network is performing well</h4><p class="center">Most areas have strong and stable coverage.</p><div class="health-list"><div><span><i class="good"></i>Signal quality</span><b>Strong</b></div><div><span><i class="good"></i>Stability</span><b>Excellent</b></div><div><span><i class="medium"></i>Congestion</span><b>Moderate</b></div></div></article>
+    <article class="panel chart-panel"><div class="panel-head performance-head"><div><h3>Network performance</h3><p>Medians for the selected period</p></div><div class="legend"><span><i class="l1"></i>Download</span><span><i class="l2"></i>Upload</span><span><i class="l3"></i>Latency</span></div><a class="icon-btn" href="{{ route('reports.index') }}" aria-label="Open reports"><i data-lucide="more-horizontal"></i></a></div><div class="chart-wrap is-empty"><p class="chart-empty"><b>No trend for this period</b><span>Medians for coverage, speed and latency appear once measurements are recorded.</span></p><canvas id="performanceChart" hidden></canvas></div><div class="trend-cards"><div><i class="good"></i><span><b>Download</b><small>No samples in this period</small></span></div><div><i class="medium"></i><span><b>Latency</b><small>No samples in this period</small></span></div><div><i class="bad-dot"></i><span><b>Packet loss</b><small>No samples in this period</small></span></div></div></article>
+    <article class="panel health"><div class="panel-head"><div><h3>Network health</h3><p>Live quality score</p></div><span class="live is-waiting" id="healthLive"><i></i><b id="healthLiveLabel">Waiting</b></span></div><div class="gauge"><div><strong>—</strong><span>/100</span></div></div><h4>Health score</h4><p class="center">Scores appear after real measurements are available.</p><div class="health-list"><div><span><i class="good"></i>Signal quality</span><b>—</b></div><div><span><i class="good"></i>Stability</span><b>—</b></div><div><span><i class="medium"></i>Congestion</span><b>—</b></div></div></article>
   </div>
   <div class="grid-bottom">
-    <article class="panel"><div class="panel-head"><div><h3>Coverage by location</h3><p>Live signal quality across campus</p></div><button type="button" class="text-btn" data-page="heatmap">View heat map <i data-lucide="arrow-up-right"></i></button></div><div class="location-list">
-      <div><span class="loc-icon"><i data-lucide="library"></i></span><div><strong>Main Library</strong><small>4 access points · 126 measurements</small></div><span class="signal-bars s4"><i></i><i></i><i></i><i></i></span><b>Excellent</b><em>-48 dBm</em></div>
-      <div><span class="loc-icon"><i data-lucide="flask-conical"></i></span><div><strong>Science Complex</strong><small>3 access points · 94 measurements</small></div><span class="signal-bars s3"><i></i><i></i><i></i><i></i></span><b>Good</b><em>-61 dBm</em></div>
-      <div><span class="loc-icon"><i data-lucide="graduation-cap"></i></span><div><strong>Lecture Theatre A</strong><small>2 access points · 72 measurements</small></div><span class="signal-bars s2"><i></i><i></i><i></i><i></i></span><b class="amber">Fair</b><em>-69 dBm</em></div>
-      <div><span class="loc-icon"><i data-lucide="utensils"></i></span><div><strong>Student Centre</strong><small>3 access points · 108 measurements</small></div><span class="signal-bars s1"><i></i><i></i><i></i><i></i></span><b class="red">Poor</b><em>-78 dBm</em></div>
+    <article class="panel"><div class="panel-head"><div><h3>Coverage by location</h3><p>Live signal quality across campus</p></div><a class="text-btn" href="{{ route('surveys.index') }}#coverage">View heat map <i data-lucide="arrow-up-right"></i></a></div><div class="location-list">
+      @forelse($analyticsFloors as $floor)
+      <a href="{{ route('floor-plans.workspace', $floor) }}">
+        <span class="loc-icon"><i data-lucide="layers-3"></i></span>
+        <div><strong>{{ $floor->building->name }}</strong><small>{{ $floor->name }} · {{ $floor->surveys_count }} {{ \Illuminate\Support\Str::plural('survey', $floor->surveys_count) }}</small></div>
+        <span class="signal-bars"></span>
+        <b>Open</b>
+        <em>Floor plan</em>
+      </a>
+      @empty
+      <div><span class="loc-icon"><i data-lucide="map-pin"></i></span><div><strong>No floors yet</strong><small>Add a campus, building and floor before surveying.</small></div><span></span><b><a href="{{ route('locations.index') }}">Add location</a></b><em></em></div>
+      @endforelse
     </div></article>
-    <article class="panel alerts"><div class="panel-head"><div><h3>Smart insights</h3><p>Issues that need your attention</p></div><span class="count">3</span></div>
-      <div class="alert critical"><span><i data-lucide="wifi-off"></i></span><div><b>Weak coverage detected</b><p>Student Centre · East wing</p><small>Signal dropped to -78 dBm</small></div><button type="button"><i data-lucide="chevron-right"></i></button></div>
-      <div class="alert medium"><span><i data-lucide="users"></i></span><div><b>High congestion</b><p>Lecture Theatre A</p><small>84 concurrent devices on AP-07</small></div><button type="button"><i data-lucide="chevron-right"></i></button></div>
-      <div class="alert low"><span><i data-lucide="message-circle-warning"></i></span><div><b>Feedback trend</b><p>Engineering Block</p><small>4 reports of instability today</small></div><button type="button"><i data-lucide="chevron-right"></i></button></div>
+    <article class="panel alerts"><div class="panel-head"><div><h3>Smart insights</h3><p>Latest conclusions from measured evidence</p></div><span class="count">{{ ($dashboardInsights ?? collect())->count() }}</span></div>
+      @forelse(($dashboardInsights ?? collect()) as $insight)
+      <div class="alert {{ $insight->severity === 'high' ? 'critical' : ($insight->severity === 'medium' ? 'medium' : 'low') }}">
+        <span><i data-lucide="brain-circuit"></i></span>
+        <div><b>{{ $insight->title }}</b><p>{{ optional($insight->floor->building)->name }} · {{ optional($insight->floor)->name }}</p><small>{{ ucfirst($insight->status) }} · {{ ucfirst($insight->severity) }}</small></div>
+        <a href="{{ route('insights.index') }}#insight-{{ $insight->id }}" aria-label="Open {{ $insight->title }}"><i data-lucide="chevron-right"></i></a>
+      </div>
+      @empty
+      <div class="alert low"><span><i data-lucide="brain-circuit"></i></span><div><b>No insights yet</b><p>Generate insights after a survey has measurements.</p><small>Rules, evidence and limitations stay attached to each result.</small></div><button type="button" data-go="insights" aria-label="Open explainable insights"><i data-lucide="chevron-right"></i></button></div>
+      @endforelse
     </article>
   </div>
 </section>
@@ -127,6 +149,7 @@
 </div>
 </main></div>
 <div class="modal" id="importModal"><div class="modal-box wide-modal"><button type="button" class="modal-close import-close"><i data-lucide="x"></i></button><span class="modal-icon"><i data-lucide="file-up"></i></span><h2>Import measurements</h2><p>Upload a CSV file and map its columns to SignalGrid fields.</p><div class="drop-zone"><i data-lucide="upload-cloud"></i><b>Drop CSV here or choose a file</b><span>First row must contain column headings</span><input type="file" accept=".csv" hidden></div><div class="template-link"><i data-lucide="download"></i><span><b>Need the correct structure?</b><small>Download the measurement import template.</small></span><button type="button">Download template</button></div><button type="button" class="primary full">Continue to column mapping <i data-lucide="arrow-right"></i></button></div></div><div class="modal" id="testModal"><div class="modal-box"><button type="button" class="modal-close"><i data-lucide="x"></i></button><span class="modal-icon"><i data-lucide="gauge"></i></span><h2>Run network test</h2><p>Capture a simulated measurement for the UI prototype.</p><div class="test-fields"><label>Location<select><option>Main Library · Ground floor</option><option>Science Complex · Lab 2</option><option>Student Centre · East wing</option></select></label><label>Measurement point<input placeholder="e.g. North-east reading desk"></label></div><div class="test-progress hidden"><div class="spinner"></div><b>Testing connection...</b><span>Measuring download speed and latency</span></div><button type="button" class="primary run-test">Start test <i data-lucide="arrow-right"></i></button></div></div>
-<div class="toast" id="toast"><i data-lucide="circle-check"></i><div><b>Measurement complete</b><span>Results were added to the dashboard.</span></div></div>
+<div class="toast" id="toast" role="status"><i data-lucide="circle-check"></i><div><b>SignalGrid</b><span>Open a survey to record a measurement.</span><a href="{{ route('surveys.index') }}">Open survey studio</a></div></div>
 <script>window.signalGridAnalytics={url:@json(route('analytics.dashboard')),csrf:@json(csrf_token())};</script>
+<script>window.signalGridUiRoutes={floorPlans:@json(route('locations.index')),surveys:@json(route('surveys.index')),sources:@json(route('surveys.index').'#import-measurements'),template:@json(route('measurement-imports.template')),accessPoints:@json(route('access-points.index')),insights:@json(route('insights.index')),feedback:@json(route('feedback.public')),feedbackAdmin:@json(route('feedback.index')),reports:@json(route('reports.index')),locations:@json(route('locations.index')),settings:@json(route('settings.index')),comparisons:@json(route('comparisons.index')),measurements:@json(route('measurements.index')),notifications:@json(route('notifications.index')),notificationReadBase:@json(url('/api/notifications'))};</script>
 </body></html>

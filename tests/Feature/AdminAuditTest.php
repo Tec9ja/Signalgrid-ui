@@ -31,6 +31,14 @@ class AdminAuditTest extends TestCase
         $this->assertDatabaseHas('audit_logs', ['event' => 'user.updated', 'auditable_id' => $user->id]);
     }
 
+    public function test_super_admin_administration_page_loads(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('Super Admin');
+
+        $this->actingAs($admin)->get('/admin')->assertOk()->assertSee('Save');
+    }
+
     public function test_admin_health_checks_are_persisted(): void
     {
         $admin = User::factory()->create();

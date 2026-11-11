@@ -32,6 +32,7 @@ class SiteIntegrationTest extends TestCase
         foreach ([
             '/dashboard', '/locations', '/surveys', '/access-points', '/insights',
             '/admin/feedback', '/comparisons', '/reports', '/project-alignment',
+            '/measurements', '/settings',
         ] as $uri) {
             $this->actingAs($viewer)->get($uri)->assertOk();
         }
@@ -59,6 +60,10 @@ class SiteIntegrationTest extends TestCase
         $viewer->assignRole('Viewer');
         $this->actingAs($viewer)->get('/admin')->assertForbidden();
         $this->actingAs($viewer)->get('/validation')->assertForbidden();
+        $this->actingAs($viewer)->get('/locations')
+            ->assertOk()
+            ->assertDontSee('href="'.route('validation.index').'"', false)
+            ->assertDontSee('href="'.route('admin.index').'"', false);
     }
 
     public function test_legacy_registration_route_is_not_referenced_by_welcome_view(): void

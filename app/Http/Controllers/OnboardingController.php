@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers;
+use Illuminate\Http\RedirectResponse;use Illuminate\Http\Request;use Illuminate\View\View;
+class OnboardingController extends Controller{public function show(Request$r):View{if($r->user()->onboarding_completed_at)return view('onboarding.show',['completed'=>true]);return view('onboarding.show',['completed'=>false]);}public function store(Request$r):RedirectResponse{$data=$r->validate(['department'=>['required','string','max:150'],'phone'=>['nullable','string','max:40'],'intended_use'=>['required','in:view_network_health,submit_feedback,academic_research,network_operations,other']]);$r->user()->update($data+['onboarding_completed_at'=>now()]);return redirect()->route('dashboard')->with('status','Welcome to SignalGrid. Your Viewer account is ready.');}public function skip(Request$r):RedirectResponse{$r->user()->update(['intended_use'=>'other','onboarding_completed_at'=>now()]);return redirect()->route('dashboard');}}

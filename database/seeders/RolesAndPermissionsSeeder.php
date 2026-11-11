@@ -1,4 +1,72 @@
 <?php
+
 namespace Database\Seeders;
-use App\Models\User;use Illuminate\Database\Seeder;use Illuminate\Support\Facades\Hash;use Spatie\Permission\Models\Permission;use Spatie\Permission\Models\Role;use Spatie\Permission\PermissionRegistrar;
-class RolesAndPermissionsSeeder extends Seeder{public function run():void{app(PermissionRegistrar::class)->forgetCachedPermissions();$ps=['dashboard.view','users.manage','settings.manage','locations.manage','surveys.manage','measurements.create','measurements.import','heatmaps.generate','insights.review','reports.generate','audit.view'];foreach($ps as $p)Permission::firstOrCreate(['name'=>$p,'guard_name'=>'web']);$map=['Super Admin'=>$ps,'Network Admin'=>array_values(array_diff($ps,['users.manage'])),'Surveyor'=>['dashboard.view','locations.manage','surveys.manage','measurements.create','measurements.import','heatmaps.generate'],'Analyst'=>['dashboard.view','insights.review','reports.generate'],'Viewer'=>['dashboard.view']];foreach($map as $n=>$p){$r=Role::firstOrCreate(['name'=>$n,'guard_name'=>'web']);$r->syncPermissions($p);}$u=User::updateOrCreate(['email'=>env('SIGNALGRID_ADMIN_EMAIL')],['name'=>env('SIGNALGRID_ADMIN_NAME'),'password'=>Hash::make(env('SIGNALGRID_ADMIN_PASSWORD')),'status'=>'active','email_verified_at'=>now()]);$u->syncRoles(['Super Admin']);}}
+
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
+
+class RolesAndPermissionsSeeder extends Seeder
+{
+    public function run(): void
+    {
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        $permissions = [
+            'dashboard.view',
+            'users.manage',
+            'settings.manage',
+            'locations.manage',
+            'surveys.manage',
+            'measurements.create',
+            'measurements.import',
+            'heatmaps.generate',
+            'insights.review',
+            'reports.generate',
+            'audit.view',
+        ];
+
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+        }
+
+        $roles = [
+            'Super Admin' => $permissions,
+            'Network Admin' => array_values(array_diff($permissions, ['users.manage'])),
+            'Surveyor' => ['dashboard.view', 'locations.manage', 'surveys.manage', 'measurements.create', 'measurements.import', 'heatmaps.generate'],
+            'Analyst' => ['dashboard.view', 'insights.review', 'reports.generate'],
+            'Viewer' => ['dashboard.view'],
+        ];
+
+        foreach ($roles as $name => $granted) {
+            $role = Role::firstOrCreate(['name' => $name, 'guard_name' => 'web']);
+            $role->syncPermissions($granted);
+        }
+
+        $email = config('signalgrid.admin_email');
+        $password = config('signalgrid.admin_password');
+
+        if (! is_string($email) || $email === '' || ! is_string($password) || $password === '') {
+            return;
+        }
+
+        $user = User::query()->where('email', $email)->first();
+
+        if (! $user) {
+            $name = config('signalgrid.admin_name');
+
+            $user = User::create([
+                'name' => is_string($name) && $name !== '' ? $name : 'SignalGrid Administrator',
+                'email' => $email,
+                'password' => $password,
+                'status' => 'active',
+            ]);
+        }
+
+        if (! $user->hasRole('Super Admin')) {
+            $user->syncRoles(['Super Admin']);
+        }
+    }
+}

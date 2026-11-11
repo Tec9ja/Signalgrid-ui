@@ -1,4 +1,6 @@
 <?php
+use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ValidationController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReportController;
@@ -13,12 +15,14 @@ use App\Http\Controllers\HeatmapController;
 use App\Http\Controllers\MeasurementTemplateController;
 use App\Http\Controllers\MeasurementImportController;
 use App\Http\Controllers\MeasurementController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\MeasurementPointController;
 use App\Http\Controllers\SurveyController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FloorPlanController;
 use App\Http\Controllers\FloorPlanWorkspaceController;
+use App\Http\Controllers\CampusSetupController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LocationManagementController;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +39,8 @@ Route::middleware('auth')->group(function(){
  Route::delete('/api/floor-plans/{floorPlan}',[FloorPlanController::class,'destroy'])->name('floor-plans.destroy');
 
  Route::get('/locations',[LocationController::class,'index'])->name('locations.index');
+ Route::get('/campus-setup',[CampusSetupController::class,'show'])->name('campus-setup.show');
+ Route::post('/campus-setup',[CampusSetupController::class,'store'])->name('campus-setup.store');
  Route::get('/api/location-tree',[LocationController::class,'tree'])->name('locations.tree');
  Route::post('/api/institutions/{institution}/campuses',[LocationManagementController::class,'campus']);
  Route::post('/api/campuses/{campus}/buildings',[LocationManagementController::class,'building']);
@@ -79,6 +85,11 @@ Route::middleware('auth')->group(function(){
 Route::get('/api/analytics/dashboard', [AnalyticsController::class, 'dashboard'])
     ->middleware('auth')
     ->name('analytics.dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/measurements', [MeasurementController::class, 'index'])->name('measurements.index');
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+});
 
 Route::middleware('auth')->group(function(){
  Route::get('/access-points',[AccessPointController::class,'index'])->name('access-points.index');
@@ -135,4 +146,14 @@ Route::middleware('auth')->group(function(){
  Route::post('/api/surveys/{survey}/validation',[ValidationController::class,'scientific'])->name('validation.scientific');
  Route::post('/api/validation/acceptance',[ValidationController::class,'acceptance'])->name('validation.acceptance');
  Route::post('/api/research-observations',[ValidationController::class,'observation'])->name('validation.observations.store');
+});
+
+Route::middleware('guest')->group(function(){
+ Route::get('/register',[RegisteredUserController::class,'create'])->name('register');
+ Route::post('/register',[RegisteredUserController::class,'store'])->middleware('throttle:5,1')->name('register.store');
+});
+Route::middleware('auth')->group(function(){
+ Route::get('/onboarding',[OnboardingController::class,'show'])->name('onboarding.show');
+ Route::post('/onboarding',[OnboardingController::class,'store'])->name('onboarding.store');
+ Route::post('/onboarding/skip',[OnboardingController::class,'skip'])->name('onboarding.skip');
 });

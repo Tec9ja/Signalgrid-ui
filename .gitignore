@@ -26,3 +26,16 @@ Thumbs.db
 /migration_backups/
 /storage/app/maintenance/
 /signalgrid_discovery_report.json
+
+.vercel
+.env
+.env.*
+!.env.example
+
+/audit-reports/
+/playwright-report/
+/test-results/
+/*.py
+/validation-*.png
+/validation-*.mjs
+/signalgrid_registration_ui_discovery.*

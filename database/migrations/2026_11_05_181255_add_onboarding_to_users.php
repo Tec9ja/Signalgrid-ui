@@ -1,0 +1,3 @@
+<?php
+use Illuminate\Database\Migrations\Migration;use Illuminate\Database\Schema\Blueprint;use Illuminate\Support\Facades\Schema;
+return new class extends Migration{public function up():void{Schema::table('users',function(Blueprint$t){$t->string('department')->nullable()->after('email');$t->string('phone',40)->nullable()->after('department');$t->string('intended_use',80)->nullable()->after('phone');$t->timestamp('onboarding_completed_at')->nullable()->after('intended_use');});}public function down():void{Schema::table('users',fn(Blueprint$t)=>$t->dropColumn(['department','phone','intended_use','onboarding_completed_at']));}};

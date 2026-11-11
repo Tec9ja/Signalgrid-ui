@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\{AuditLog, SystemCheck, User};
+use Spatie\Permission\Models\Role;
 use App\Services\{AuditService, SystemHealthService};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ class AdminController extends Controller
             'users' => User::with('roles')->orderBy('name')->paginate(25),
             'checks' => SystemCheck::orderBy('check_key')->get(),
             'unreadNotifications' => $request->user()->unreadNotifications,
+            'roles' => Role::query()->orderBy('name')->pluck('name'),
         ]);
     }
 

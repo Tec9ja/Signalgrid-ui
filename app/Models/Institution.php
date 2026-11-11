@@ -4,4 +4,4 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Institution extends Model { use HasFactory, SoftDeletes; protected $fillable=['name','slug','type','timezone','status']; protected function casts():array{return [];} public function campuses(){return $this->hasMany(Campus::class);} }
+class Institution extends Model { use HasFactory, SoftDeletes; protected $fillable=['name','slug','type','timezone','website','motto','status']; protected function casts():array{return [];} public function campuses(){return $this->hasMany(Campus::class);} }

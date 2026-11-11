@@ -1,1 +1,21 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Feedback received | SignalGrid</title>@vite('resources/js/app.js')</head><body class="feedback-public-body"><main class="feedback-thanks panel"><div class="auth-brand-mark">✓</div><h1>Feedback received</h1><p>Reference: {{ $feedback->public_id }}</p><p>The report will be compared with available measurements from the same location and period. A user report is not treated as technically confirmed unless supporting evidence exists.</p></main></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feedback received | SignalGrid</title>
+@vite('resources/js/app.js')
+</head>
+<body class="feedback-public-body">
+<main class="feedback-thanks panel">
+<div class="auth-brand-mark">✓</div>
+<h1>Feedback received</h1>
+<p>Reference: {{ $feedback->public_id }}</p>
+<p>The report will be compared with available measurements from the same location and period. A user report is not treated as technically confirmed unless supporting evidence exists.</p>
+<div class="header-links">
+<a class="primary" href="{{ route('feedback.public') }}">Submit another report</a>
+<a class="secondary" href="{{ route('login') }}">Sign in</a>
+</div>
+</main>
+</body>
+</html>

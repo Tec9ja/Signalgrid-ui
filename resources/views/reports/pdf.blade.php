@@ -99,7 +99,7 @@
     </p>
 
     <div class="footer">
-        SignalGrid · Adekunle Ajasin University, Akungba · Report ID {{ $report->id }}
+        SignalGrid · {{ \App\Models\Institution::query()->orderBy('id')->value('name') ?: 'Adekunle Ajasin University, Akungba' }} · Report ID {{ $report->id }}
     </div>
 </body>
 </html>
