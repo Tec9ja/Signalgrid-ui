@@ -39,10 +39,10 @@
 <article class="ap-list-row">
 <span><b>{{ $ap->name }}</b><small>{{ $ap->identifier }} · {{ $ap->vendor ?? 'Vendor unavailable' }}</small></span>
 <span><a href="{{ route('floor-plans.workspace',$ap->floor) }}">{{ $ap->floor->building->name }} · {{ $ap->floor->name }}</a></span>
-<strong>{{ optional($ap->latestLoadSample)->connected_clients ?? '—' }}</strong>
-<strong>{{ optional($ap->latestLoadSample)->channel_utilisation_percent ?? '—' }}%</strong>
+<strong>{{ $ap->latestLoadSample?->connected_clients ?? '—' }}</strong>
+<strong>{{ $ap->latestLoadSample?->channel_utilisation_percent === null ? '—' : number_format((float) $ap->latestLoadSample->channel_utilisation_percent, 1).'%' }}</strong>
 <div>
-<em class="survey-status {{ $ap->analysis['classification']==='possible_congestion'?'collecting':'draft' }}">{{ str_replace('_',' ',ucfirst($ap->analysis['classification'])) }}</em>
+<em class="survey-status {{ ['possible_congestion'=>'is-congestion','no_congestion_detected'=>'is-clear','no_congestion_evidence'=>'is-clear','insufficient_data'=>'is-unknown','insufficient_evidence'=>'is-unknown'][$ap->analysis['classification']] ?? 'is-unknown' }}">{{ ['possible_congestion'=>'Possible congestion','no_congestion_detected'=>'No congestion detected','no_congestion_evidence'=>'No congestion detected','insufficient_data'=>'Insufficient data','insufficient_evidence'=>'Insufficient data'][$ap->analysis['classification']] ?? str_replace('_',' ',ucfirst($ap->analysis['classification'])) }}</em>
 <small>{{ implode(' ', $ap->analysis['limitations']) }}</small>
 </div>
 </article>

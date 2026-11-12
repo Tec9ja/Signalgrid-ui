@@ -51,7 +51,11 @@ if (ac) {
             liveLabel.closest('.live')?.classList.toggle('is-waiting', !ready);
         }
         const recordsNote = document.querySelector('.metrics .metric:nth-child(4) p');
-        if (recordsNote) recordsNote.textContent = `${data.counts?.simulated ?? 0} simulated records are excluded from scores`;
+        if (recordsNote) {
+            const measured = data.provenance?.measured ?? 0;
+            const imported = data.provenance?.imported ?? 0;
+            recordsNote.textContent = `${measured} measured, ${imported} imported. ${data.counts?.simulated ?? 0} simulated records are excluded from scores.`;
+        }
         const trendNotes = document.querySelectorAll('.trend-cards small');
         const format = (value, suffix) => (value === null || value === undefined ? 'No samples in this period' : `${Number(value).toFixed(1)} ${suffix}`);
         if (trendNotes[0]) trendNotes[0].textContent = format(data.performance.median_download_mbps, 'Mbps median');
@@ -65,12 +69,22 @@ if (ac) {
         const coverageBar = document.querySelector('.metrics .metric:nth-child(1) .bar i');
         if (coverageBar && data.coverage.value !== null) coverageBar.style.width = `${Math.max(0, Math.min(100, Number(data.coverage.value)))}%`;
         const coverageNote = document.querySelector('.metrics .metric:nth-child(1) p');
-        if (coverageNote) coverageNote.textContent = `${data.counts.real} measured records in this period`;
+        if (coverageNote) {
+            if (data.coverage?.definition) {
+                const estimated = data.coverage.estimated_area_percent ?? '—';
+                const unmeasured = data.coverage.unmeasured_area_percent ?? '—';
+                coverageNote.textContent = `Good-signal coverage of the usable floor. Estimated ${estimated}%. Unmeasured ${unmeasured}%.`;
+            } else if (data.coverage?.value !== null && data.coverage?.value !== undefined) {
+                coverageNote.textContent = 'This figure is from an earlier heat map. Generate it again to separate good-signal coverage from unmeasured area.';
+            } else {
+                coverageNote.textContent = `${data.counts.real} measured records in this period`;
+            }
+        }
         const downloadNote = document.querySelector('.metrics .metric:nth-child(2) p');
         if (downloadNote && data.performance.median_upload_mbps !== null) downloadNote.textContent = `Median upload ${Number(data.performance.median_upload_mbps).toFixed(1)} Mbps`;
         const note = $('.health .center');
         if (note && data.health.limitation) note.textContent = data.health.limitation;
-        else if (note && data.health.value !== null) note.textContent = 'Health score uses the measurements in the selected period.';
+        else if (note && data.health.value !== null) note.textContent = 'Health score weights coverage 30%, throughput 20%, latency 15%, packet loss 15%, stability 10% and AP load 10%. Missing parts are not reweighted.';
     };
     const syncCustomRange = () => {
         const custom = $('#dateFilter')?.value === 'custom';

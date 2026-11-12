@@ -1419,3 +1419,204 @@ header {
   }
   .setup-card-head .secondary { grid-column: 1 / -1; margin-left: 0; justify-self: start; }
 }
+
+@media (min-width: 1101px) {
+  .domain-body .heatmap-layout {
+    grid-template-columns: minmax(240px, 280px) minmax(0, 1fr) minmax(280px, 320px);
+  }
+}
+.domain-body .heatmap-controls small,
+.domain-body .quiet-note {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #4d6274;
+}
+.domain-body .quiet-note {
+  max-width: 68ch;
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f4f8fa;
+}
+.domain-body .heatmap-summary {
+  display: grid;
+  align-content: start;
+  gap: 0;
+}
+.domain-body .heatmap-summary > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--sg-line);
+}
+.domain-body .heatmap-summary > div span {
+  min-width: 0;
+  line-height: 1.35;
+}
+.domain-body .heatmap-summary > div b {
+  flex: none;
+  color: var(--sg-ink);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+.domain-body .heatmap-summary p {
+  margin: 12px 0 0;
+  line-height: 1.5;
+}
+.domain-body .heatmap-summary #distanceNote {
+  margin-top: 10px;
+}
+.source-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.source-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #4d6274;
+}
+.source-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+}
+.source-legend .measured { background: #12b69c; }
+.source-legend .imported { background: #377adf; }
+.source-legend .simulated { background: #e49a36; }
+.domain-body .validation-tools {
+  align-items: end;
+}
+.domain-body .validation-tools h2 {
+  grid-column: 1 / -1;
+  margin: 0 0 4px;
+}
+.domain-body .validation-tools label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.domain-body .validation-grid article > div b {
+  color: var(--sg-ink);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.domain-body .validation-grid details {
+  margin-top: 10px;
+}
+.domain-body .validation-grid summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f766e;
+}
+@media (min-width: 861px) {
+  .domain-body .feedback-admin-head,
+  .domain-body .feedback-admin-row {
+    grid-template-columns: minmax(140px, 1.2fr) minmax(120px, .8fr) minmax(108px, .45fr) minmax(220px, 1.7fr) 96px auto;
+  }
+  .domain-body .ap-list-head,
+  .domain-body .ap-list-row {
+    grid-template-columns: minmax(160px, 1.2fr) minmax(140px, 1fr) 72px 96px minmax(220px, 1.6fr);
+  }
+}
+.domain-body .feedback-admin-head b {
+  min-width: 0;
+  line-height: 1.3;
+}
+.domain-body .feedback-admin-row em {
+  font-style: normal;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #3e5468;
+}
+.survey-status.is-congestion { background: #fde8ea; color: #9f1239; }
+.survey-status.is-clear { background: #e5f8f4; color: #0f766e; }
+.survey-status.is-unknown { background: #f8f1e3; color: #8a5a12; }
+.ap-list-row > div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  justify-items: start;
+}
+.ap-list-row .survey-status {
+  width: auto;
+  max-width: 100%;
+  white-space: normal;
+  line-height: 1.35;
+}
+.ap-list-row > div small {
+  display: block;
+  line-height: 1.45;
+}
+.report-list article > div {
+  flex-wrap: wrap;
+}
+.report-list .secondary {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+}
+.shell .metric p,
+.shell .health .center {
+  line-height: 1.45;
+}
+.report-readout p,
+.report-figures p { line-height: 1.5; }
+.report-figures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+.report-figures article {
+  padding: 14px;
+  border-radius: 14px;
+  background: #f6fafb;
+  border: 1px solid var(--sg-line);
+}
+.report-figures small {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #6b8090;
+}
+.report-figures b {
+  display: block;
+  margin-top: 6px;
+  font-size: 28px;
+  letter-spacing: -0.04em;
+  color: var(--sg-ink);
+}
+.report-snapshot {
+  margin-top: 14px;
+}
+.report-snapshot summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.report-snapshot pre {
+  overflow: auto;
+  max-height: 420px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+@media (max-width: 800px) {
+  .report-figures { grid-template-columns: 1fr; }
+}

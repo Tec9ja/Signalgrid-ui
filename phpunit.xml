@@ -35,5 +35,8 @@
         <env name="SIGNALGRID_ADMIN_NAME" value="" force="true"/>
         <env name="SIGNALGRID_ADMIN_EMAIL" value="" force="true"/>
         <env name="SIGNALGRID_ADMIN_PASSWORD" value="" force="true"/>
+        <env name="AWS_ACCESS_KEY_ID" value="" force="true"/>
+        <env name="AWS_SECRET_ACCESS_KEY" value="" force="true"/>
+        <env name="AWS_BUCKET" value="" force="true"/>
     </php>
 </phpunit>

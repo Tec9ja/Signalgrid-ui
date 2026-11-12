@@ -15,7 +15,7 @@
         <div>
             <span class="eyebrow">SCIENTIFIC VALIDATION</span>
             <h1>Testing and research evaluation</h1>
-            <p>IDW holdout validation, operational acceptance checks and reproducible evidence.</p>
+            <p>Spatial holdout checks predictions across the floor plan. MAE is the average absolute error in dB. RMSE rises faster when a few predictions are far off. Bias above zero means the estimate was stronger than the measured signal.</p>
         </div>
         <a class="secondary" href="{{ route('dashboard') }}">Dashboard</a>
     </header>
@@ -60,7 +60,7 @@
     <section class="validation-grid" aria-label="Scientific validation runs">
         @forelse ($validationRuns as $run)
             <article class="panel">
-                <span class="survey-status completed">{{ strtoupper($run->method) }}</span>
+                <span class="survey-status completed">{{ $run->method === 'idw_spatial_holdout' ? 'Spatial holdout' : str_replace('_', ' ', $run->method) }}</span>
                 <h2>{{ $run->survey?->name ?? 'Deleted survey' }}</h2>
                 <div>
                     <small>MAE</small>
@@ -71,10 +71,22 @@
                     <b>{{ $run->root_mean_square_error }} dB</b>
                 </div>
                 <div>
+                    <small>Bias</small>
+                    <b>{{ $run->mean_bias_error }} dB</b>
+                </div>
+                <div>
                     <small>Holdout</small>
                     <b>{{ $run->holdout_points }}/{{ $run->total_points }}</b>
                 </div>
                 <p>{{ $run->executed_at->format('d M Y H:i') }}</p>
+                @if (is_array($run->limitations) && count($run->limitations))
+                    <details>
+                        <summary>What this result means</summary>
+                        @foreach ($run->limitations as $item)
+                            <p>{{ $item }}</p>
+                        @endforeach
+                    </details>
+                @endif
             </article>
         @empty
             <div class="panel domain-empty">

@@ -13,8 +13,9 @@
 <header class="domain-header">
 <div>
 <span class="eyebrow">USER EXPERIENCE</span>
-<h1>Feedback and evidence correlation</h1>
+<h1>Feedback and technical evidence</h1>
 <p>{{ $stats['count'] }} responses · Average {{ $stats['average_satisfaction'] ?: '—' }}/5</p>
+<p class="quiet-note">A location and time match is not a statistical correlation.</p>
 </div>
 <div class="header-links">
 <a class="primary" href="{{ route('feedback.public') }}" target="_blank" rel="noopener">Share feedback form</a>
@@ -31,13 +32,13 @@
 <div class="feedback-admin-head"><b>Location</b><b>Problem</b><b>Satisfaction</b><b>Evidence</b><b>Time</b><b></b></div>
 @forelse($feedback as $item)
 <div class="feedback-admin-row">
-<span><b>{{ $item->building->name }}</b><small>{{ optional($item->floor)->name }} · {{ optional($item->surveyArea)->name }}</small></span>
+<span><b>{{ $item->building->name }}</b><small>{{ collect([optional($item->floor)->name, optional($item->surveyArea)->name])->filter()->implode(' · ') }}</small></span>
 <span>{{ str_replace('_',' ',$item->problem_type) }}</span>
 <strong>{{ $item->overall_satisfaction }}/5</strong>
-<em>{{ $item->correlations->count() ? $item->correlations->pluck('strength')->sort()->first().' correlation' : 'insufficient data' }}</em>
+<em class="evidence-note">{{ data_get($item->correlations->sortByDesc('id')->first(), 'evidence.interpretation_label') ?: ($item->correlations->count() ? 'Technical evidence match. Not a statistical correlation.' : 'Insufficient supporting measurements') }}</em>
 <small>{{ $item->experienced_at->format('d M H:i') }}</small>
 @can('insights.review')
-<button class="secondary" type="button" data-correlate="{{ route('feedback.correlate',$item) }}">Correlate</button>
+<button class="secondary" type="button" data-correlate="{{ route('feedback.correlate',$item) }}">Match evidence</button>
 @else
 <span></span>
 @endcan

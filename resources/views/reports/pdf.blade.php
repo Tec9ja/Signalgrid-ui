@@ -88,14 +88,28 @@
         </div>
     @endif
 
+    <h2>How the figures are calculated</h2>
+    @foreach (data_get($report->snapshot, 'explanations', []) as $explanation)
+        <p>{{ $explanation }}</p>
+    @endforeach
+    @if (data_get($report->snapshot, 'survey.validation_mae_db') !== null)
+        <p>
+            This survey's spatial holdout recorded MAE {{ data_get($report->snapshot, 'survey.validation_mae_db') }} dB,
+            RMSE {{ data_get($report->snapshot, 'survey.validation_rmse_db') }} dB
+            and bias {{ data_get($report->snapshot, 'survey.validation_bias_db') }} dB.
+        </p>
+    @endif
+
     <h2>Data sources</h2>
     <p>{{ implode(', ', $report->data_sources ?? []) }}</p>
+    <p>Measured means collected in the app. Imported means a CSV file. Estimated means a heat-map prediction. Simulated values are excluded from technical scores.</p>
 
     <h2>Methodology disclosure</h2>
     <p>
         Direct and imported measurements remain distinguishable from estimated heat-map regions.
-        Simulated measurements are excluded from technical calculations. Recommendations are generated
-        from documented deterministic rules and should be reviewed alongside the stated limitations.
+        Simulated measurements are excluded from technical calculations. A feedback match uses location
+        and time. It is not a statistical correlation. Recommendations are generated from documented
+        deterministic rules and should be reviewed alongside the stated limitations.
     </p>
 
     <div class="footer">

@@ -67,8 +67,11 @@ document.querySelectorAll('[data-correlate]').forEach((button) => {
         button.disabled = true;
         try {
             const data = await send(button.dataset.correlate, 'POST', {});
-            if (message) message.textContent = `Correlation finished. ${Array.isArray(data) ? data.length : ''} evidence link(s) recorded.`;
-            window.location.reload();
+            const count = data?.total_correlations ?? 0;
+            if (message) message.textContent = `Technical evidence matching finished. ${count} match(es) recorded. This is not a statistical correlation.`;
+            const note = button.closest('.feedback-admin-row')?.querySelector('.evidence-note');
+            if (note && data?.interpretation_label) note.textContent = data.interpretation_label;
+            button.disabled = false;
         } catch (error) {
             if (message) message.textContent = error.message;
             button.disabled = false;

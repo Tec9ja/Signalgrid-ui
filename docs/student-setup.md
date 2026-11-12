@@ -182,6 +182,12 @@ In the Vercel project, set:
 | `CACHE_STORE` | `database` |
 | `QUEUE_CONNECTION` | `sync` |
 | `FILESYSTEM_DISK` | `local` |
+| `AWS_ACCESS_KEY_ID` | object-storage key, or leave unset |
+| `AWS_SECRET_ACCESS_KEY` | object-storage secret, or leave unset |
+| `AWS_DEFAULT_REGION` | the bucket region, such as `us-east-1` |
+| `AWS_BUCKET` | the bucket name, or leave unset |
+| `AWS_ENDPOINT` | set only for Cloudflare R2 or another S3-compatible store |
+| `AWS_USE_PATH_STYLE_ENDPOINT` | `true` when that store needs path-style URLs |
 | `SIGNALGRID_ADMIN_NAME` | the first administrator's name |
 | `SIGNALGRID_ADMIN_EMAIL` | the first administrator's email |
 | `SIGNALGRID_ADMIN_PASSWORD` | a private password |
@@ -231,15 +237,11 @@ These stay in PostgreSQL when the container stops:
 - insight rows, comparison rows, and report rows
 - the project profile
 
-These do not stay. They are written to the container's local disk, and that disk is removed when the instance stops:
+Floor-plan images, the original CSV from an import, and generated report PDF and CSV files stay only when object storage is configured. Set `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION` and `AWS_BUCKET` in the Vercel project. Do not put the key or secret in git. For Cloudflare R2, also set `AWS_ENDPOINT` and `AWS_USE_PATH_STYLE_ENDPOINT=true`.
 
-- floor-plan images
-- the original CSV after an import
-- generated report PDF and CSV files
+Leave `FILESYSTEM_DISK=local`. SignalGrid uses the `s3` disk for those files when both the bucket and the access key are set. Without them, the files are written to the container disk and disappear when the instance stops. The admin health check reports that storage error in production until the bucket and key are set.
 
-A CSV import still keeps the accepted measurement rows, because those rows are written to PostgreSQL during the upload request. The floor-plan image is different: the page asks for the file again later, and that request fails after the container has been replaced. A report row can remain while its download fails for the same reason.
-
-Use the published site for the shared class record and the measurements. Use a computer that stays running, with `php artisan serve` or your own server, when the class needs floor-plan images and report downloads to keep working after a restart. The disk name stays `local` so the current tests and upload code keep working.
+Measurement rows, report rows and the stored file path remain in PostgreSQL either way. A CSV import still keeps the accepted measurement rows. The floor-plan picture itself is what disappears when object storage is not configured.
 
 ## Do not commit secrets
 

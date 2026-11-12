@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Models\SystemCheck;
+use App\Support\PersistentStorage;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 
 class SystemHealthService
 {
@@ -16,10 +17,18 @@ class SystemHealthService
             return ['Database connection is operational.', ['connection' => DB::connection()->getName()]];
         });
         $checks[] = $this->check('storage', function () {
+            $disk = PersistentStorage::diskName();
+            if (app()->environment('production') && $disk !== 's3') {
+                throw new RuntimeException('Uploaded floor plans and reports use temporary disk storage. Set AWS_BUCKET and AWS_ACCESS_KEY_ID so files survive a restart. Cloudflare R2 works through AWS_ENDPOINT and AWS_USE_PATH_STYLE_ENDPOINT.');
+            }
             $path = 'health-checks/'.now()->format('YmdHis').'.txt';
-            Storage::disk('local')->put($path, 'SignalGrid health check');
-            Storage::disk('local')->delete($path);
-            return ['Private storage is writable.', ['disk' => 'local']];
+            $written = PersistentStorage::disk($disk)->put($path, 'SignalGrid health check');
+            if ($written === false) {
+                throw new RuntimeException('Private storage could not be written.');
+            }
+            PersistentStorage::disk($disk)->delete($path);
+
+            return ['Private storage is writable.', ['disk' => $disk, 'persistent' => PersistentStorage::persists()]];
         });
         $checks[] = $this->check('queue', function () {
             return ['Queue configuration loaded.', ['connection' => config('queue.default')]];

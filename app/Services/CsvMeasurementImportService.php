@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\MeasurementImport;
+use App\Support\PersistentStorage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
@@ -20,10 +21,25 @@ class CsvMeasurementImportService
     {
         $import->update(['status' => 'processing']);
 
-        $path = Storage::disk('local')->path($import->file_path);
-        $handle = fopen($path, 'r');
+        $disk = $import->storage_disk ?: PersistentStorage::diskName();
+        $contents = Storage::disk($disk)->get($import->file_path);
+        $temporary = tempnam(sys_get_temp_dir(), 'sgcsv');
+        if (! is_string($contents) || $temporary === false || file_put_contents($temporary, $contents) === false) {
+            if (is_string($temporary)) {
+                @unlink($temporary);
+            }
+            $import->update([
+                'status' => 'failed',
+                'error_message' => 'The uploaded CSV file could not be opened.',
+            ]);
+
+            return $import->refresh();
+        }
+
+        $handle = fopen($temporary, 'r');
 
         if ($handle === false) {
+            @unlink($temporary);
             $import->update([
                 'status' => 'failed',
                 'error_message' => 'The uploaded CSV file could not be opened.',
@@ -42,6 +58,7 @@ class CsvMeasurementImportService
 
         if ($missing !== []) {
             fclose($handle);
+            @unlink($temporary);
 
             $import->update([
                 'status' => 'failed',
@@ -143,6 +160,7 @@ class CsvMeasurementImportService
         }
 
         fclose($handle);
+        @unlink($temporary);
 
         $import->update([
             'status' => 'completed',
