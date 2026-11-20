@@ -21,6 +21,7 @@
 @can('locations.manage')
 <section class="panel">
 <h2>Add access point</h2>
+<p>Choose the floor. A floor plan is not required.</p>
 <form class="ops-form wide" data-json="{{ route('access-points.store') }}">
 <label>Floor<select name="floor_id" required><option value="">Select floor</option>@foreach($floors as $floor)<option value="{{ $floor->id }}">{{ $floor->building->name }} · {{ $floor->name }}</option>@endforeach</select></label>
 <label>Name<input name="name" required maxlength="150"></label>
@@ -38,7 +39,7 @@
 @forelse($aps as $ap)
 <article class="ap-list-row">
 <span><b>{{ $ap->name }}</b><small>{{ $ap->identifier }} · {{ $ap->vendor ?? 'Vendor unavailable' }}</small></span>
-<span><a href="{{ route('floor-plans.workspace',$ap->floor) }}">{{ $ap->floor->building->name }} · {{ $ap->floor->name }}</a></span>
+<span><a href="{{ route('locations.index') }}">{{ $ap->floor->building->name }} · {{ $ap->floor->name }}</a></span>
 <strong>{{ $ap->latestLoadSample?->connected_clients ?? '—' }}</strong>
 <strong>{{ $ap->latestLoadSample?->channel_utilisation_percent === null ? '—' : number_format((float) $ap->latestLoadSample->channel_utilisation_percent, 1).'%' }}</strong>
 <div>

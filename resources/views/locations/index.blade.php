@@ -14,7 +14,7 @@
 <div>
 <span class="eyebrow">CAMPUS STRUCTURE</span>
 <h1>Location hierarchy</h1>
-<p>Campus, building, floor and survey area. Open a floor to calibrate its plan.</p>
+<p>Campus, building, floor and survey area. A floor plan is optional and is only needed for a heat map.</p>
 </div>
 <div class="header-links">
 @can('locations.manage')<a class="primary" href="{{ route('campus-setup.show') }}">Campus setup</a>@endcan
@@ -109,13 +109,14 @@ Not recorded
 <div class="floor-row">
 <div>
 <b>{{ $floor->name }}</b>
-<small>Level {{ $floor->level_number }} · {{ $floor->surveyAreas->count() }} survey areas · {{ $floor->activeFloorPlan ? 'Floor plan ready' : 'No floor plan' }}</small>
+<small>Level {{ $floor->level_number }} · {{ $floor->surveyAreas->count() }} survey areas · {{ $floor->activeFloorPlan ? 'Floor plan added' : 'Floor plan optional' }}</small>
 @if($floor->surveyAreas->isNotEmpty())
 <small>{{ $floor->surveyAreas->pluck('name')->join(', ') }}</small>
 @endif
 </div>
 <div class="row-actions">
-<a href="{{ route('floor-plans.workspace', $floor) }}">Open floor plan</a>
+<a href="{{ route('floor-plans.workspace', $floor) }}">{{ $floor->activeFloorPlan ? 'Open floor plan' : 'Add floor plan' }}</a>
+<a href="{{ route('surveys.index') }}">Surveys</a>
 </div>
 </div>
 @can('locations.manage')

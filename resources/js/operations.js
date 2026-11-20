@@ -189,7 +189,7 @@ const areaSelect = document.querySelector('#surveyArea');
 if (floorSelect && planSelect && window.surveyCreateFloors) {
     const fill = () => {
         const floor = window.surveyCreateFloors.find((item) => String(item.id) === floorSelect.value);
-        planSelect.innerHTML = '<option value="">Select floor plan</option>';
+        planSelect.innerHTML = '<option value="">No floor plan</option>';
         areaSelect.innerHTML = '<option value="">Whole floor</option>';
         (floor?.plans || []).forEach((plan) => {
             const option = document.createElement('option');
@@ -203,7 +203,8 @@ if (floorSelect && planSelect && window.surveyCreateFloors) {
             option.textContent = area.name || 'Survey area';
             areaSelect.appendChild(option);
         });
-        if (floor?.plans?.length === 1) planSelect.value = String(floor.plans[0].id);
+        const chosen = (floor?.plans || []).find((plan) => plan.active);
+        if (chosen) planSelect.value = String(chosen.id);
     };
     floorSelect.addEventListener('change', fill);
     fill();

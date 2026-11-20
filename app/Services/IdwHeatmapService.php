@@ -17,6 +17,11 @@ class IdwHeatmapService
         $fraction = (float) ($options['max_distance'] ?? 0.30);
 
         $survey->loadMissing('floorPlan');
+        if (! $survey->floorPlan) {
+            throw ValidationException::withMessages([
+                'heatmap' => 'Add a floor plan before generating a heat map.',
+            ]);
+        }
         $scale = RfGeometry::scale($survey->floorPlan);
         $radius = $fraction * max($scale['width'], $scale['height']);
 
@@ -29,7 +34,7 @@ class IdwHeatmapService
         $ids = [];
         foreach ($rows as $point) {
             $measurement = $point->measurements->first();
-            if (! $measurement) {
+            if (! $measurement || $point->x_normalized === null || $point->y_normalized === null) {
                 continue;
             }
             [$px, $py] = RfGeometry::locate((float) $point->x_normalized, (float) $point->y_normalized, $scale);

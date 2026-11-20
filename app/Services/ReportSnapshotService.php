@@ -51,7 +51,7 @@ class ReportSnapshotService
                 'id' => $survey->id,
                 'name' => $survey->name,
                 'location' => $survey->floor->building->name.' · '.$survey->floor->name,
-                'floor_plan_version' => $survey->floorPlan->version,
+                'floor_plan_version' => $survey->floorPlan?->version,
                 'measurement_count' => $measurements->count(),
                 'good_signal_coverage_percent' => $heatmap?->coverage_percent,
                 'coverage_percent' => $heatmap?->coverage_percent,

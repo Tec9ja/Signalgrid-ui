@@ -60,7 +60,7 @@ Public feedback does not need an account. The form is at `/feedback`.
 | Overview | `/dashboard` | Read scores. Empty numbers mean no measurements are stored yet |
 | Locations | `/locations` | Review the campus tree and add a floor, area, or floor plan when you have one |
 | Campus setup | `/campus-setup` | Confirm or replace the institution, campus, and buildings |
-| RF survey studio | `/surveys` | Create a survey on a floor that already has a floor plan |
+| RF survey studio | `/surveys` | Create a survey on a floor. Leave the floor plan blank until you want a heat map |
 | Measurements | `/measurements` | Review stored readings |
 | AP load analysis | `/access-points` | Record an access point and its load samples |
 | Explainable insights | `/insights` | Generate and review rule-based findings |
@@ -119,13 +119,14 @@ Login attempts are limited to five per minute. If a test account gets locked dur
 
 1. Sign in as the Super Admin created above.
 2. Open **Campus setup** and read the institution name, address, coordinate, and three buildings. Save only when the form is the campus you mean to keep.
-3. Open **Locations**. Add a floor only after the team has chosen a real floor to survey.
-4. Upload a floor-plan image the team has the right to use. Calibrate it with a distance you measured.
-5. In **RF survey studio**, create a survey on that floor plan and record points, or import a CSV.
-6. Download the empty CSV template at `/measurement-import-template.csv`. The import reads the file during the same request. The rows that pass validation stay in the database.
-7. Generate a heatmap only after the survey has enough real points. A heatmap is calculated from stored measurements.
-8. Ask classmates to submit `/feedback` from phones on the network you are studying.
-9. An Analyst generates insights and a report. A Super Admin assigns those roles in **Administration**.
+3. Open **Locations**. Add a floor, and a survey area if you need one. A floor plan is optional.
+4. Open **AP load analysis**. Add an access point on that floor and record a sample. A floor plan is not required.
+5. In **RF survey studio**, create a survey and leave Floor plan on “No floor plan”. In the survey workspace, enter the reading and save it. You can also import a CSV.
+6. Download the CSV template at `/measurement-import-template.csv`. Leave `x_normalized` and `y_normalized` blank when the survey has no floor plan. Fill those columns only for a survey that has a floor plan. The import reads the file during the same request.
+7. Upload a floor-plan image only when you have one and want a heat map. Calibrate it with a measured distance, draw the usable boundary, then attach that plan to a survey.
+8. Generate a heat map only for a survey that has a floor plan and enough real points on that plan.
+9. Ask classmates to submit `/feedback` from phones on the network you are studying.
+10. An Analyst generates insights and a report. A Super Admin assigns those roles in **Administration**.
 
 Buildings that already have a floor plan, a survey, an access point, or feedback are kept when campus setup is saved again. A building with none of those can be retired if the new form omits it.
 

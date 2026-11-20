@@ -55,7 +55,8 @@ class ReportController extends Controller
             'data_sources' => ['measured', 'imported', 'estimated', 'simulated', 'controller', 'user_reported'],
             'limitations' => array_values(array_filter([
                 'Simulated measurements are excluded from technical calculations.',
-                $survey && ! data_get($snapshot, 'survey.coverage_percent') ? 'No completed heat map was available for this period.' : null,
+                $survey && ! $survey->floor_plan_id ? 'This survey has no floor plan, so it has no spatial heat map.' : null,
+                $survey && $survey->floor_plan_id && ! data_get($snapshot, 'survey.coverage_percent') ? 'No completed heat map was available for this period.' : null,
             ])),
             'snapshot' => $snapshot,
             'methodology_version' => '1.1',

@@ -34,7 +34,7 @@ if (sc) {
         if (pendingLabel) pendingLabel.textContent = `X ${x.toFixed(4)}, Y ${y.toFixed(4)}`;
     });
 
-    document.querySelectorAll('.survey-point').forEach((point) => {
+    document.querySelectorAll('.survey-point, .reading-row').forEach((point) => {
         point.addEventListener('click', (event) => {
             event.stopPropagation();
             document.querySelectorAll('.survey-point').forEach((item) => item.classList.remove('is-selected'));
@@ -46,14 +46,14 @@ if (sc) {
     });
 
     $('#savePoint')?.addEventListener('click', async () => {
-        if (!pending) {
+        if (!pending && sc.hasFloorPlan) {
             say('Select a point on the floor plan.');
             return;
         }
         try {
             const source = $('#pointSource')?.value || 'measured';
             await api(sc.pointUrl, 'POST', {
-                ...pending,
+                ...(pending || {}),
                 source_type: source,
                 collection_method: source === 'measured' ? 'manual' : 'import',
                 notes: $('#pointNotes')?.value || null,
@@ -66,6 +66,19 @@ if (sc) {
 
     $('#measurementForm')?.addEventListener('submit', async (event) => {
         event.preventDefault();
+        if (!selectedUrl && !sc.hasFloorPlan) {
+            try {
+                const point = await api(sc.pointUrl, 'POST', {
+                    source_type: $('#pointSource')?.value || 'measured',
+                    collection_method: 'manual',
+                    notes: $('#pointNotes')?.value || null,
+                });
+                selectedUrl = String(sc.measurementUrlPattern || '').replace('__POINT__', point.id);
+            } catch (error) {
+                say(error.message);
+                return;
+            }
+        }
         if (!selectedUrl) {
             say('Select a saved point before recording a measurement.');
             return;

@@ -28,7 +28,8 @@ class ConnectedWorkflowTest extends TestCase
 
         $this->actingAs($admin)->get('/locations')
             ->assertOk()
-            ->assertSee('Open floor plan', false)
+            ->assertSee('Add floor plan', false)
+            ->assertSee('Floor plan optional', false)
             ->assertSee(route('floor-plans.workspace', $floor), false)
             ->assertSee('Save campus', false);
     }

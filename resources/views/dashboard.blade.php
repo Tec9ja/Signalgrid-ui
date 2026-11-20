@@ -60,12 +60,12 @@
   <div class="grid-bottom">
     <article class="panel"><div class="panel-head"><div><h3>Coverage by location</h3><p>Live signal quality across campus</p></div><a class="text-btn" href="{{ route('surveys.index') }}#coverage">View heat map <i data-lucide="arrow-up-right"></i></a></div><div class="location-list">
       @forelse($analyticsFloors as $floor)
-      <a href="{{ route('floor-plans.workspace', $floor) }}">
+      <a href="{{ route('locations.index') }}">
         <span class="loc-icon"><i data-lucide="layers-3"></i></span>
         <div><strong>{{ $floor->building->name }}</strong><small>{{ $floor->name }} · {{ $floor->surveys_count }} {{ \Illuminate\Support\Str::plural('survey', $floor->surveys_count) }}</small></div>
         <span class="signal-bars"></span>
         <b>Open</b>
-        <em>Floor plan</em>
+        <em>{{ $floor->activeFloorPlan ? 'Plan added' : 'Plan optional' }}</em>
       </a>
       @empty
       <div><span class="loc-icon"><i data-lucide="map-pin"></i></span><div><strong>No floors yet</strong><small>Add a campus, building and floor before surveying.</small></div><span></span><b><a href="{{ route('locations.index') }}">Add location</a></b><em></em></div>

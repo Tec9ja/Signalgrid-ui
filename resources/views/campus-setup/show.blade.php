@@ -162,7 +162,7 @@
     'interactive' => true,
 ])
 <ul class="setup-kept">
-<li>Interior floors are added after a site visit.</li>
+<li>Interior floors are added after a site visit. A floor plan is optional.</li>
 <li>Access points, measurements and feedback are not part of this record.</li>
 </ul>
 </aside>
@@ -173,7 +173,7 @@
 <span>03</span>
 <div>
 <h2>Buildings</h2>
-<p>Add only buildings you can name. A building left off this list is removed only when it has no floor plan, survey, access point or feedback.</p>
+<p>Add only buildings you can name. A floor plan is not required. A building left off this list is removed only when it has no floor plan, survey, access point or feedback.</p>
 </div>
 <button class="secondary" type="button" data-add-building>Add building</button>
 </header>

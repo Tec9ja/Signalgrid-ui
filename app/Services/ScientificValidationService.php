@@ -12,6 +12,11 @@ class ScientificValidationService
     public function validate(Survey $survey, int $userId, float $holdoutPercent = 20, float $power = 2): ValidationRun
     {
         $survey->loadMissing('floorPlan');
+        if (! $survey->floorPlan) {
+            throw ValidationException::withMessages([
+                'validation' => 'Add a floor plan before running a spatial holdout.',
+            ]);
+        }
         $scale = RfGeometry::scale($survey->floorPlan);
         $rows = $survey->points()
             ->where('validation_status', 'valid')
@@ -21,7 +26,7 @@ class ScientificValidationService
         $points = [];
         foreach ($rows as $point) {
             $measurement = $point->measurements->first();
-            if (! $measurement) {
+            if (! $measurement || $point->x_normalized === null || $point->y_normalized === null) {
                 continue;
             }
             [$px, $py] = RfGeometry::locate((float) $point->x_normalized, (float) $point->y_normalized, $scale);

@@ -21,10 +21,10 @@
 @can('surveys.manage')
 <section class="panel" id="import-measurements">
 <h2>New survey</h2>
-<p>Imports and manual measurements are recorded inside the survey workspace after the survey exists.</p>
+<p>A floor plan is optional. Readings are recorded in the survey workspace. Add a floor plan only when you want a heat map.</p>
 <form class="ops-form wide" data-json="{{ route('surveys.store') }}">
 <label>Floor<select id="surveyFloor" name="floor_id" required><option value="">Select floor</option>@foreach($floors as $floor)<option value="{{ $floor->id }}">{{ $floor->building->name }} · {{ $floor->name }}</option>@endforeach</select></label>
-<label>Floor plan<select id="surveyPlan" name="floor_plan_id" required><option value="">Select floor plan</option></select></label>
+<label>Floor plan<select id="surveyPlan" name="floor_plan_id"><option value="">No floor plan</option></select></label>
 <label>Survey area<select id="surveyArea" name="survey_area_id"><option value="">Whole floor</option></select></label>
 <label>Name<input name="name" required maxlength="180" placeholder="Library ground baseline"></label>
 <label>Purpose<input name="purpose" required maxlength="80" value="baseline"></label>
@@ -52,11 +52,11 @@
 <span class="row-actions">
 <a href="{{ route('surveys.show',$survey) }}">Open</a>
 <a href="{{ route('heatmaps.index',$survey) }}">Heat map</a>
-<a href="{{ route('floor-plans.workspace',$survey->floor) }}">Floor plan</a>
+<a href="{{ route('floor-plans.workspace',$survey->floor) }}">{{ $survey->floorPlan ? 'Floor plan' : 'Add floor plan' }}</a>
 </span>
 </div>
 @empty
-<div class="domain-empty"><h2>No surveys yet</h2><p>Create the first survey for a floor that already has a floor plan.</p></div>
+<div class="domain-empty"><h2>No surveys yet</h2><p>Create a survey for any floor. A floor plan is optional until you want a heat map.</p></div>
 @endforelse
 </section>
 {{ $surveys->links() }}

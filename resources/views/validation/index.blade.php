@@ -15,7 +15,7 @@
         <div>
             <span class="eyebrow">SCIENTIFIC VALIDATION</span>
             <h1>Testing and research evaluation</h1>
-            <p>Spatial holdout checks predictions across the floor plan. MAE is the average absolute error in dB. RMSE rises faster when a few predictions are far off. Bias above zero means the estimate was stronger than the measured signal.</p>
+            <p>Spatial holdout needs a floor plan. It checks predictions across that plan. MAE is the average absolute error in dB. RMSE rises faster when a few predictions are far off. Bias above zero means the estimate was stronger than the measured signal.</p>
         </div>
         <a class="secondary" href="{{ route('dashboard') }}">Dashboard</a>
     </header>

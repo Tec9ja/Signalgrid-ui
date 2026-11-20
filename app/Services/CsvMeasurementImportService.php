@@ -10,15 +10,9 @@ use Throwable;
 
 class CsvMeasurementImportService
 {
-    private array $required = [
-        'x_normalized',
-        'y_normalized',
-        'rssi_dbm',
-        'captured_at',
-    ];
-
     public function process(MeasurementImport $import, int $userId): MeasurementImport
     {
+        $import->loadMissing('survey');
         $import->update(['status' => 'processing']);
 
         $disk = $import->storage_disk ?: PersistentStorage::diskName();
@@ -54,7 +48,11 @@ class CsvMeasurementImportService
             $firstRow,
         );
 
-        $missing = array_diff($this->required, $headers);
+        $hasFloorPlan = (bool) $import->survey->floor_plan_id;
+        $required = $hasFloorPlan
+            ? ['x_normalized', 'y_normalized', 'rssi_dbm', 'captured_at']
+            : ['rssi_dbm', 'captured_at'];
+        $missing = array_diff($required, $headers);
 
         if ($missing !== []) {
             fclose($handle);
@@ -98,7 +96,7 @@ class CsvMeasurementImportService
                 $data,
             );
 
-            $errors = $this->validateRow($data);
+            $errors = $this->validateRow($data, $hasFloorPlan);
 
             if ($errors !== []) {
                 $import->errors()->create([
@@ -111,13 +109,13 @@ class CsvMeasurementImportService
             }
 
             try {
-                DB::transaction(function () use ($import, $userId, $data): void {
+                DB::transaction(function () use ($import, $userId, $data, $hasFloorPlan): void {
                     $point = $import->survey->points()->create([
                         'floor_plan_id' => $import->survey->floor_plan_id,
                         'survey_area_id' => $import->survey->survey_area_id,
                         'captured_by' => $userId,
-                        'x_normalized' => (float) $data['x_normalized'],
-                        'y_normalized' => (float) $data['y_normalized'],
+                        'x_normalized' => $hasFloorPlan ? (float) $data['x_normalized'] : null,
+                        'y_normalized' => $hasFloorPlan ? (float) $data['y_normalized'] : null,
                         'source_type' => 'imported',
                         'collection_method' => 'csv',
                         'validation_status' => 'valid',
@@ -173,16 +171,24 @@ class CsvMeasurementImportService
         return $import->refresh()->load('survey');
     }
 
-    private function validateRow(array $data): array
+    private function validateRow(array $data, bool $hasFloorPlan): array
     {
         $errors = [];
+        $x = $data['x_normalized'] ?? null;
+        $y = $data['y_normalized'] ?? null;
+        $xBlank = $x === null || $x === '';
+        $yBlank = $y === null || $y === '';
 
-        foreach (['x_normalized', 'y_normalized'] as $key) {
-            if (! is_numeric($data[$key] ?? null)
-                || (float) $data[$key] < 0
-                || (float) $data[$key] > 1) {
-                $errors[] = "$key must be between 0 and 1";
+        if ($hasFloorPlan) {
+            foreach (['x_normalized', 'y_normalized'] as $key) {
+                if (! is_numeric($data[$key] ?? null)
+                    || (float) $data[$key] < 0
+                    || (float) $data[$key] > 1) {
+                    $errors[] = "$key must be between 0 and 1";
+                }
             }
+        } elseif (! $xBlank || ! $yBlank) {
+            $errors[] = 'Leave x_normalized and y_normalized blank. This survey has no floor plan.';
         }
 
         if (! is_numeric($data['rssi_dbm'] ?? null)
