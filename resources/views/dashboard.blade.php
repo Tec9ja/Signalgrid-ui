@@ -14,25 +14,8 @@
 <div class="shell">
 <aside class="sidebar" id="sidebar">
   <a class="brand" href="{{ route('dashboard') }}"><span class="brand-mark"><i data-lucide="radio-tower"></i></span><span>SignalGrid<small>Campus Intelligence</small></span></a>
-  <nav>
-    <p class="nav-label">Workspace</p>
-    <a class="nav active" href="{{ route('dashboard') }}"><i data-lucide="layout-dashboard"></i><span>Overview</span></a>
-    <a class="nav" href="{{ route('surveys.index') }}#coverage"><i data-lucide="map"></i><span>Coverage map</span></a>
-    <a class="nav" href="{{ route('surveys.index') }}"><i data-lucide="scan-line"></i><span>RF survey studio</span></a>
-    <a class="nav" href="{{ route('surveys.index') }}#import-measurements"><i data-lucide="database-zap"></i><span>Data sources</span></a>
-    <a class="nav" href="{{ route('access-points.index') }}"><i data-lucide="router"></i><span>AP load analysis</span></a>
-    <a class="nav" href="{{ route('insights.index') }}"><i data-lucide="brain-circuit"></i><span>Explainable insights</span></a>
-    <a class="nav" href="{{ route('measurements.index') }}"><i data-lucide="activity"></i><span>Measurements</span></a>
-    <a class="nav" href="{{ route('feedback.index') }}"><i data-lucide="messages-square"></i><span>User feedback</span></a>
-    <a class="nav" href="{{ route('reports.index') }}"><i data-lucide="file-chart-column"></i><span>Reports</span></a>
-    <a class="nav" href="{{ route('comparisons.index') }}"><i data-lucide="git-compare"></i><span>Comparisons</span></a>
-    <p class="nav-label space">Management</p>
-    <a class="nav" href="{{ route('locations.index') }}"><i data-lucide="building-2"></i><span>Locations</span></a>
-    @can('locations.manage')<a class="nav" href="{{ route('campus-setup.show') }}"><i data-lucide="map-pinned"></i><span>Campus setup</span></a>@endcan
-    <a class="nav" href="{{ route('project.alignment') }}"><i data-lucide="compass"></i><span>Project alignment</span></a>
-    <a class="nav" href="{{ route('settings.index') }}"><i data-lucide="settings-2"></i><span>Settings</span></a>
-    @can('audit.view')<a class="nav" href="{{ route('validation.index') }}"><i data-lucide="shield-check"></i><span>Validation</span></a>@endcan
-    @can('users.manage')<a class="nav" href="{{ route('admin.index') }}"><i data-lucide="shield"></i><span>Administration</span></a>@endcan
+  <nav aria-label="Primary">
+    @include('partials.sidebar-links', ['navClass' => 'nav'])
   </nav>
   <div class="side-card"><span class="pulse"></span><strong>Measured data</strong><p>Simulated records stay out of scores</p><div><span>Health</span><b id="sideHealthValue">—</b></div></div>
   @php

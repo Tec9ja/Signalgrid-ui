@@ -68,6 +68,25 @@ h1, h2, h3, h4,
   letter-spacing: .14em;
   text-transform: uppercase;
 }
+.sidebar .nav-group,
+.sg-side-nav .nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 14px 0 6px;
+  border-top: 1px solid rgba(255, 255, 255, .08);
+}
+.sidebar .nav-group:first-child,
+.sg-side-nav .nav-group:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+.sidebar .nav-label,
+.sg-side-nav .nav-label {
+  margin: 0 12px 6px;
+  color: #8ea4b8;
+}
 
 .sidebar,
 .sg-app-sidebar {
