@@ -30,6 +30,18 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function(){Route::get('/login',[AuthenticatedSessionController::class,'create'])->name('login');Route::post('/login',[AuthenticatedSessionController::class,'store'])->middleware('throttle:5,1')->name('login.store');});
 Route::post('/logout',[AuthenticatedSessionController::class,'destroy'])->middleware('auth')->name('logout');
 Route::redirect('/','/dashboard');
+Route::get('/class-guide.pdf', function () {
+    return response()->file(base_path('docs/SignalGrid-admin-guide.pdf'), [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="SignalGrid-admin-guide.pdf"',
+    ]);
+})->name('guides.admin');
+Route::get('/class-walkthrough.mp4', function () {
+    return response()->file(base_path('docs/SignalGrid-walkthrough.mp4'), [
+        'Content-Type' => 'video/mp4',
+        'Content-Disposition' => 'inline; filename="SignalGrid-walkthrough.mp4"',
+    ]);
+})->name('guides.walkthrough');
 Route::get('/dashboard',[DashboardController::class,'index'])->middleware('auth')->name('dashboard');
 
 Route::middleware('auth')->group(function(){

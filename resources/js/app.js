@@ -22,4 +22,5 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(window.validationConfig) import('./validation.js');
  if(window.reportConfig || window.reportsConfig) import('./reports.js');
  if(window.comparisonConfig || window.comparisonsConfig) import('./comparisons.js');
+ if(window.floorPlanConfig) import('./floor-plan-workspace.js');
 });

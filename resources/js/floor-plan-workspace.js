@@ -4,6 +4,7 @@ if (config) {
     const $ = (selector) => document.querySelector(selector);
     const canvas = $('#fpCanvas');
     const image = $('#fpImage');
+    const pdfFrame = $('#fpPdf');
     const calibrationLine = $('#calibrationLine');
     const message = $('#message');
 
@@ -23,14 +24,23 @@ if (config) {
             },
         });
 
-        const data = response.status === 204 ? null : await response.json();
+        const raw = response.status === 204 ? '' : await response.text();
+        let data = null;
+
+        if (raw) {
+            try {
+                data = JSON.parse(raw);
+            } catch {
+                data = null;
+            }
+        }
 
         if (!response.ok) {
             const validationMessage = data?.errors
                 ? Object.values(data.errors).flat()[0]
                 : null;
 
-            throw new Error(data?.message || validationMessage || 'Request failed.');
+            throw new Error(validationMessage || data?.message || 'The floor plan could not be uploaded.');
         }
 
         return data;
@@ -75,8 +85,14 @@ if (config) {
 
             button.classList.add('selected');
             selectedPlan = JSON.parse(button.dataset.plan);
-            image.src = button.dataset.file;
-            image.hidden = false;
+            const isPdf = String(selectedPlan.mime_type || '').includes('pdf');
+            image.hidden = isPdf;
+            pdfFrame.hidden = !isPdf;
+            if (isPdf) {
+                pdfFrame.src = button.dataset.file;
+            } else {
+                image.src = button.dataset.file;
+            }
             $('.fp-placeholder').hidden = true;
             $('#ppmValue').textContent = selectedPlan.pixels_per_metre
                 ? Number(selectedPlan.pixels_per_metre).toFixed(2)
@@ -213,6 +229,7 @@ if (config) {
     const applyZoom = (change) => {
         scale = Math.max(0.5, Math.min(2.5, scale + change));
         image.style.transform = `scale(${scale})`;
+        pdfFrame.style.transform = `scale(${scale})`;
         $('#zoomLabel').textContent = `${Math.round(scale * 100)}%`;
     };
 
@@ -221,6 +238,7 @@ if (config) {
     $('#resetView').addEventListener('click', () => {
         scale = 1;
         image.style.transform = 'scale(1)';
+        pdfFrame.style.transform = 'scale(1)';
         $('#zoomLabel').textContent = '100%';
     });
 }

@@ -691,6 +691,17 @@ nav[aria-label="Pagination"],
   padding: 22px 16px;
 }
 .domain-body .fp-upload input { font-size: 13px; }
+.domain-body .fp-canvas img,
+.domain-body .fp-canvas iframe {
+  max-width: 100%;
+  transform-origin: top left;
+}
+.domain-body .fp-canvas iframe {
+  width: 100%;
+  height: 68vh;
+  border: 0;
+  background: #fff;
+}
 .survey-list-head,
 .survey-list-row,
 .ap-list-head,

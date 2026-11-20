@@ -1,3 +1,11 @@
+{
+	frankenphp {
+		php_ini upload_max_filesize 25M
+		php_ini post_max_size 32M
+		php_ini memory_limit 256M
+	}
+}
+
 :{$PORT:80} {
 	root * /app/public
 	encode zstd gzip

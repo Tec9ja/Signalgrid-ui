@@ -24,6 +24,7 @@ COPY . .
 COPY --from=assets /app/public/build ./public/build
 COPY Caddyfile /etc/frankenphp/Caddyfile
 COPY docker/entrypoint.sh /entrypoint.sh
+COPY docker/uploads.ini $PHP_INI_DIR/conf.d/99-uploads.ini
 
 RUN rm -f public/hot \
     && mkdir -p \

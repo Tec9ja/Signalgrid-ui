@@ -123,7 +123,7 @@ Login attempts are limited to five per minute. If a test account gets locked dur
 4. Open **AP load analysis**. Add an access point on that floor and record a sample. A floor plan is not required.
 5. In **RF survey studio**, create a survey and leave Floor plan on “No floor plan”. In the survey workspace, enter the reading and save it. You can also import a CSV.
 6. Download the CSV template at `/measurement-import-template.csv`. Leave `x_normalized` and `y_normalized` blank when the survey has no floor plan. Fill those columns only for a survey that has a floor plan. The import reads the file during the same request.
-7. Upload a floor-plan image only when you have one and want a heat map. Calibrate it with a measured distance, draw the usable boundary, then attach that plan to a survey.
+7. Upload a floor-plan image only when you have one and want a heat map. PNG, JPG, WEBP, GIF, and PDF are accepted, up to 20 MB. On the published site the image is stored in PostgreSQL, so it remains after the container sleeps. Calibrate an image with a measured distance, draw the usable boundary, then attach that plan to a survey.
 8. Generate a heat map only for a survey that has a floor plan and enough real points on that plan.
 9. Ask classmates to submit `/feedback` from phones on the network you are studying.
 10. An Analyst generates insights and a report. A Super Admin assigns those roles in **Administration**.
@@ -238,11 +238,11 @@ These stay in PostgreSQL when the container stops:
 - insight rows, comparison rows, and report rows
 - the project profile
 
-Floor-plan images, the original CSV from an import, and generated report PDF and CSV files stay only when object storage is configured. Set `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION` and `AWS_BUCKET` in the Vercel project. Do not put the key or secret in git. For Cloudflare R2, also set `AWS_ENDPOINT` and `AWS_USE_PATH_STYLE_ENDPOINT=true`.
+The original CSV from an import, and generated report PDF and CSV files, stay only when object storage is configured. Set `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION` and `AWS_BUCKET` in the Vercel project. Do not put the key or secret in git. For Cloudflare R2, also set `AWS_ENDPOINT` and `AWS_USE_PATH_STYLE_ENDPOINT=true`.
 
-Leave `FILESYSTEM_DISK=local`. SignalGrid uses the `s3` disk for those files when both the bucket and the access key are set. Without them, the files are written to the container disk and disappear when the instance stops. The admin health check reports that storage error in production until the bucket and key are set.
+Leave `FILESYSTEM_DISK=local`. SignalGrid uses the `s3` disk for those files when both the bucket and the access key are set. Without them, import originals and generated report files are written to the container disk and disappear when the instance stops. Floor-plan images are kept in PostgreSQL in that case, so the picture remains after the container sleeps. The admin health check reports the storage gap for the other files until the bucket and key are set.
 
-Measurement rows, report rows and the stored file path remain in PostgreSQL either way. A CSV import still keeps the accepted measurement rows. The floor-plan picture itself is what disappears when object storage is not configured.
+Measurement rows, report rows and the stored file path remain in PostgreSQL either way. A CSV import still keeps the accepted measurement rows.
 
 ## Do not commit secrets
 
